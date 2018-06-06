@@ -19,5 +19,6 @@ class Uoms(CompositeAction):
         request['response'] = Response(
             Response.get_template({
                 "data": request['uoms']
+                # "data": "Hello World"
             })
         )

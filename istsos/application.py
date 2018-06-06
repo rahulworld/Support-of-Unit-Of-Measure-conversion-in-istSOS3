@@ -248,9 +248,13 @@ REST_API = {
         'list.observationTypes',
         'ObservationTypes'
     ),
-    "FETCH_UOMS": (
+    "FETCH_UOMS1": (
         'list.uoms',
         'Uoms'
+    ),
+    "UNIT_CONVERSION": (
+        'units.unitConversion',
+        'UnitConversion'
     ),
     "FETCH_SAMPLING_TYPES": (
         'list.samplingTypes',
@@ -375,10 +379,6 @@ REST_API = {
     "CHECK_PROCESSING_DETAIL_IDENTIFIER": (
         'utilities.checkProcessingDetailIdentifier',
         'CheckProcessingDetailIdentifier'
-    ),
-    "UNIT_CONVERSION": (
-        'units.UnitConversion',
-        'UnitConversion'
     )
 }
 
@@ -394,6 +394,7 @@ class Server:
         for key in keys:
             rule = REST_API[key]
             module = 'istsos.actions.servers.rest.%s' % rule[0]
+            print('Hello world')
             m = importlib.import_module(module)
             action = getattr(m, rule[1])
             self.rules[key] = action
