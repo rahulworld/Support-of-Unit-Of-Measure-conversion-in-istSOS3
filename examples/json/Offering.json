@@ -1,0 +1,57 @@
+{
+    "id": 3214,
+    "name": "d0ee4e863aca11e79ff7e0db55c4a7a5",
+    "procedure": "BELLINZONA",
+    "procedure_description_format": [
+        "http://www.opengis.net/sensorML/1.0.1"
+    ],
+    "observable_properties": [
+        {
+            "id": 12,
+            "name": "air temperature",
+            "definition": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature",
+            "uom": "°C",
+            "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "column": "_32"
+        },
+        {
+            "id": 13,
+            "name": "air humidity",
+            "definition": "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:humidity",
+            "uom": "%",
+            "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+            "column": "_32"
+        }
+    ],
+    "observation_types": [
+        "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+    ],
+    "observed_area": {
+        "lower_corner": [0, 0],
+        "upper_corner": [0, 0]
+    },
+    "phenomenon_time": {
+        "begin": "",
+        "end": ""
+    },
+    "result_time": {
+        "begin": "",
+        "end": ""
+    },
+    "foi_type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint",
+    "sampled_foi": {
+        "name": "Torre nord",
+        "identifier": "belli_castello_2",
+        "description": "",
+        "shape": {
+            "coordinates": [
+                715086,
+                98172,
+                292.64
+            ],
+            "type": "Point"
+        },
+        "id": 53,
+        "type": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
+    }
+}

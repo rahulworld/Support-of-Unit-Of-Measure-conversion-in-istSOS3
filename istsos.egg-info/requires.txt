@@ -1,0 +1,7 @@
+psycopg2-binary
+aiopg
+jsonschema
+lxml
+pytest
+dateutils
+tornado
