@@ -9,28 +9,8 @@ from istsos.actions.action import CompositeAction
 
 #!/usr/bin/python
 import psycopg2
-# from config import config
-
-#!/usr/bin/python
 from configparser import ConfigParser
-
-# def config(filename='database.ini', section='postgresql'):
-#     # create a parser
-#     parser = ConfigParser()
-#     # read config file
-#     parser.read(filename)
- 
-#     # get section, default to postgresql
-    
-#     if parser.has_section(section):
-        
-#         # params = parser.items(section)
-#         # for param in params:
-#         #     db[param[0]] = param[1]
-#     else:
-#         raise Exception('Section {0} not found in the {1} file'.format(section, filename))
- 
-#     return db
+import json
 
 def connect():
     """ Connect to the PostgreSQL database server """
@@ -38,7 +18,7 @@ def connect():
     try:
         db = {}
         db["host"]="localhost"
-        db["database"]="rahul"
+        db["database"]="ist3"
         db["user"]="postgres"
         db["password"]="postgres"
         # read connection parameters
@@ -75,19 +55,29 @@ def get_parts():
     try:
         db = {}
         db["host"]="localhost"
-        db["database"]="rahul"
+        db["database"]="ist3"
         db["user"]="postgres"
         db["password"]="postgres"
         # read connection parameters
         params = db
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT open*'MB/min'::unit@ 'GB/d',close*'m'::unit@ 'km' from bitprice")
-#         cur.execute("SELECT open*'m'::unit@ 'mi' from bitprice")
+        # cur.execute("SELECT open*'MB/min'::unit@ 'GB/d',close*'m'::unit@ 'km' from bitprice")
+        # cur.execute("SELECT array_to_json(array_agg(humidity*'m'::unit@ 'mi')) from obs")
+        # cur.execute("SELECT array_to_json(array_agg(obs)) from obs")
+        # cur.execute("SELECT array_to_json(array_agg(row(iso8601, humidity))) from obs")
+        cur.execute("select row_to_json(t) from (select iso8601, humidity*'m'::unit@ 'mi' from obs) t")
         rows = cur.fetchall()
         # print("The number of parts: ", cur.rowcount)
-        for row in rows:
-            print(row)
+        # for row in rows:
+        #     print(row)
+        # print(rows[0])
+        # print(type(rows[0]))
+        # print(type(rows[0][0]))
+        # print(rows[0][0])
+        # print("apoov")
+        # data_ch = dict(rows[0])
+        # print(data_ch)
         cur.close()
         return rows
     except (Exception, psycopg2.DatabaseError) as error:
@@ -98,6 +88,7 @@ def get_parts():
 
 
 class UnitConversion(CompositeAction):
+    
 
     @asyncio.coroutine
     def before(self, request):
@@ -106,11 +97,26 @@ class UnitConversion(CompositeAction):
     @asyncio.coroutine
     def after(self, request):
         connect()
-        print(get_parts())
+        rows = get_parts()
+        # row=rows[0]
+        all_data = []
+        for i in rows:
+            tu = i[0]
+            all_data.append(tu)
+        # print(get_parts())
+        # print(rows)
+            # print(tu)
+            # print("*"*20)
+        # final_dict = get_parts()
+        # all_keys = final_dict.keys()
+        # new_dict = dict()
+        # for key in all_keys:
+        #     new_dict[key.strip()] = final_dict[key].strip()
+
         request['response'] = Response(
             Response.get_template({
                 # "data": request['uoms']
-                # data1 = jsonify(result = json_data)
-                "data": request['uoms']
+                "data" : json.dumps(all_data[0])
+                # "data": request['uoms']
             })
         )
