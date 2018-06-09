@@ -49,7 +49,7 @@ def connect():
             print('Database connection closed.')
 
 
-def get_parts():
+def get_parts(from_unit,to_unit):
     """ query parts from the parts table """
     conn = None
     try:
@@ -66,7 +66,7 @@ def get_parts():
         # cur.execute("SELECT array_to_json(array_agg(humidity*'m'::unit@ 'mi')) from obs")
         # cur.execute("SELECT array_to_json(array_agg(obs)) from obs")
         # cur.execute("SELECT array_to_json(array_agg(row(iso8601, humidity))) from obs")
-        cur.execute("select row_to_json(t) from (select iso8601, humidity*'m'::unit@ 'mi' from obs) t")
+        cur.execute("select row_to_json(t) from (select iso8601, humidity*'"+from_unit+"'::unit@ '"+to_unit+"' from obs) t")
         rows = cur.fetchall()
         # print("The number of parts: ", cur.rowcount)
         # for row in rows:
@@ -92,17 +92,26 @@ class UnitConversion(CompositeAction):
 
     @asyncio.coroutine
     def before(self, request):
-        yield from self.add_retriever('Uoms')
+        print("unit conversion")
+        print(request)
+        yield from self.add_retriever('UnitConversion')
 
     @asyncio.coroutine
     def after(self, request):
+        from_unit=request['json']['from']
+        to_unit=request['json']['to']
+        # print("unit conversion from - to")
+        # print(from_unit+to_unit)
+        print("unit conversion ######2")
+        print(request)
         connect()
-        rows = get_parts()
+        rows = get_parts(from_unit,to_unit)
         # row=rows[0]
         all_data = []
         for i in rows:
             tu = i[0]
             all_data.append(tu)
+        data1=[json.dumps(all_data[0])]
         # print(get_parts())
         # print(rows)
             # print(tu)
@@ -115,8 +124,8 @@ class UnitConversion(CompositeAction):
 
         request['response'] = Response(
             Response.get_template({
-                # "data": request['uoms']
-                "data" : json.dumps(all_data[0])
+                "data": request['unit_conversion']
+                # "data" : data1
                 # "data": request['uoms']
             })
         )

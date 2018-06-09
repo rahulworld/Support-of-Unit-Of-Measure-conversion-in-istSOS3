@@ -136,6 +136,8 @@ class Action(object):
 
     @asyncio.coroutine
     def execute(self, request):
+        print("Action Execute")
+        print(request)
         istsos.debug("Executing: %s" % self.__class__.__name__)
         start = time.time()
         try:
