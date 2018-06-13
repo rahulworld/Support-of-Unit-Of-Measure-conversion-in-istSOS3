@@ -381,6 +381,11 @@ REST_API = {
     "UNIT_CONVERSION": (
         'units.unitConversion',
         'UnitConversion'
+    ),
+    #UNIT CONVERSION
+    "UNIT_CONVERSION_PINT": (
+        'units.unit_conversion_pint',
+        'UnitConversionPint'
     )
 }
 

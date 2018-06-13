@@ -101,7 +101,7 @@ class UnitConversion(CompositeAction):
         print(request['unit_conversion'])
         request['response'] = Response(
             Response.get_template({
-                "data": request['unit_conversion'][1]
+                "data": request['unit_conversion']
                 # "data" : data1
                 # "data": request['uoms']
             })
