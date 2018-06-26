@@ -395,14 +395,23 @@ temporalFilter:
             " UNION ".join(unions)
         )
 
+        # istsos.debug(
+        #     (
+        #         yield from cur.mogrify(sql, tuple(params*len(unions)))
+        #     ).decode("utf-8")
+        # )        
         istsos.debug(
             (
-                yield from cur.mogrify(sql, tuple(params*len(unions)))
+                yield from cur.mogrify(sql, tuple(params*2))
             ).decode("utf-8")
         )
 
-        yield from cur.execute(sql, tuple(params*len(unions)))
+        # yield from cur.execute(sql, tuple(params*len(unions)))
+        print("Observation.py")
+        print(sql)
+        yield from cur.execute(sql, tuple(params*0))
         rec = yield from cur.fetchone()
+        print(recs)
         request['observations'] = rec[0]
         request['headers'] = headers
         # recs = yield from cur.fetchall()
@@ -558,10 +567,13 @@ temporalFilter:
         #         yield from cur.mogrify(sql, tuple(params*len(unions)))
         #     ).decode("utf-8")
         # )
-
-        # yield from cur.execute(sql, tuple(params*2)
-        yield from cur.execute(sql, tuple(params*len(unions)))
+        print('observation.py')
+        print(sql)
+        yield from cur.execute(sql, tuple(params*2)
+        # yield from cur.execute(sql, tuple(params*len(unions)))
         rec = yield from cur.fetchone()
+        print(rec)
+        print('This is successful')
         request['observations'] = rec[0]
         # recs = yield from cur.fetchall()
         istsos.debug("Data is fetched!")
