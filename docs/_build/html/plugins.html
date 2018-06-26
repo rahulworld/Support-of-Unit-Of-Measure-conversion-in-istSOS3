@@ -1,0 +1,285 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Plugin Development &#8212; istSOS 3.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Entities" href="entities.html" />
+    <link rel="prev" title="Architecture" href="architecture.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="entities.html" title="Entities"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="architecture.html" title="Architecture"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="plugin-development">
+<span id="plugins"></span><h1>Plugin Development<a class="headerlink" href="#plugin-development" title="Permalink to this headline">¶</a></h1>
+<p>istSOS3 offer a plugin system. With new plugins you are able to extend istSOS3
+with new features and functionalities.</p>
+<p>There are two types of plugins that you can integrate: <strong>python plugins</strong> and <strong>web
+interfaces</strong>.</p>
+<div class="section" id="python-plugins">
+<h2>Python plugins<a class="headerlink" href="#python-plugins" title="Permalink to this headline">¶</a></h2>
+<p>With istSOS3 Python Plugins you can add new features, or modify existings
+actions.</p>
+<p>To create a new Python Plugin create your working directory into the istsos3
+plugins folder:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nb">cd</span> istsos/plugins
+mkdir istsos3_plugin_name
+<span class="nb">cd</span> istsos3_plugin_name
+mkdir lib
+touch README.md config.json __init__.py action.py
+</pre></div>
+</div>
+<p>Configure your plugin by modifying the config.json file:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Ping&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.0.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;author&quot;</span><span class="p">:</span> <span class="s2">&quot;Foo Bar&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;author_email&quot;</span><span class="p">:</span> <span class="s2">&quot;me@example.com&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is an istSOS3 plugin&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;license&quot;</span><span class="p">:</span> <span class="s2">&quot;GPL3&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://example.com/ping/&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;img&quot;</span><span class="p">:</span> <span class="s2">&quot;http://example.com/ping/logo.png&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;api&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;PING&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;istsos3_plugin_name.action&quot;</span><span class="p">,</span> <span class="s2">&quot;PingApi&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Modifiy your Python code (action.py) implementing the Action or
+CompositeAction class, the most important part is the <em>api</em> attribute.
+Here you register the name of the action with whom your plugin is called.</p>
+<div class="highlight-python3"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">istsos.entity.rest.response</span> <span class="k">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">istsos.actions.action</span> <span class="k">import</span> <span class="n">CompositeAction</span>
+
+
+<span class="k">class</span> <span class="nc">PingApi</span><span class="p">(</span><span class="n">CompositeAction</span><span class="p">):</span>
+
+    <span class="nd">@asyncio</span><span class="o">.</span><span class="n">coroutine</span>
+    <span class="k">def</span> <span class="nf">before</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;message&#39;</span> <span class="ow">in</span> <span class="n">json</span><span class="p">:</span>
+            <span class="n">request</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="s2">&quot;Ping&quot;</span><span class="p">)</span>
+
+    <span class="nd">@asyncio</span><span class="o">.</span><span class="n">coroutine</span>
+    <span class="k">def</span> <span class="nf">after</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">request</span><span class="p">[</span><span class="s1">&#39;response&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span>
+            <span class="n">json_source</span><span class="o">=</span><span class="n">Response</span><span class="o">.</span><span class="n">get_template</span><span class="p">({</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">request</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span>
+            <span class="p">})</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="web-interfaces">
+<h2>Web Interfaces<a class="headerlink" href="#web-interfaces" title="Permalink to this headline">¶</a></h2>
+<p>To build a new web component that can be easy be integrated into the
+istsos3-admin interface you have to create an npm package library.</p>
+<p>Create the working directory:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>mkdir istsos3-plugin-name
+<span class="nb">cd</span> istsos3-plugin-name
+mkdir lib
+touch .babelrc .eslintrc .gitignore .npmignore README.md
+touch lib/index.js
+touch lib/config.js
+</pre></div>
+</div>
+<p>Than initialize the npm package</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>npm init
+</pre></div>
+</div>
+<p>If you have an npm organization scope:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>npm init --scope<span class="o">=</span>YOUR-ORG-NAME
+</pre></div>
+</div>
+<p>Add all the required dependencies for the development.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>yarn add --dev <span class="se">\</span>
+    babel-cli <span class="se">\</span>
+    babel-core <span class="se">\</span>
+    babel-eslint <span class="se">\</span>
+    babel-preset-env <span class="se">\</span>
+    babel-preset-react <span class="se">\</span>
+    eslint eslint-plugin-import <span class="se">\</span>
+    eslint-plugin-jsx-a11y <span class="se">\</span>
+    eslint-plugin-react <span class="se">\</span>
+    eslint-watch <span class="se">\</span>
+    babel-plugin-transform-object-rest-spread <span class="se">\</span>
+    react <span class="se">\</span>
+    react-dom <span class="se">\</span>
+</pre></div>
+</div>
+<p>Add istsos3 dependencies:</p>
+<blockquote>
+<div><ul class="simple">
+<li>istsos3-core contains fetching capabilities to execute istSOS3 actions.</li>
+<li>istsos3-ui contains some reusable istSOS3 web widgets</li>
+</ul>
+</div></blockquote>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>yarn add <span class="se">\</span>
+    @istsos/istsos3-core <span class="se">\</span>
+    @istsos/istsos3-ui
+</pre></div>
+</div>
+<p>To develop using the Semantic UI framework</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>yarn add --dev <span class="se">\</span>
+    semantic-ui-react <span class="se">\</span>
+    semantic-ui-css
+</pre></div>
+</div>
+<p>Fill the babel presets file .babelrc with this configuration</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;presets&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;env&quot;</span><span class="p">,</span> <span class="s2">&quot;react&quot;</span><span class="p">],</span>
+    <span class="nt">&quot;plugins&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;transform-object-rest-spread&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Modify the package.json file scripts like this</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;build&quot;</span><span class="p">:</span> <span class="s2">&quot;babel lib -d build&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;build:watch&quot;</span><span class="p">:</span> <span class="s2">&quot;babel lib -w -d build&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;lint&quot;</span><span class="p">:</span> <span class="s2">&quot;eslint lib/**; exit 0&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;lint:watch&quot;</span><span class="p">:</span> <span class="s2">&quot;esw -w lib/**&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;prepublish&quot;</span><span class="p">:</span> <span class="s2">&quot;npm run build&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Creates a symbolic link from a global folder</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>npm link
+</pre></div>
+</div>
+<p>If working with source code of istsos3-core and istsos3-ui, link them globally
+as in the previews command then link them to you plugin</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>npm link @istsos/istsos3-core
+npm link @istsos/istsos3-ui
+</pre></div>
+</div>
+<p>Go in the istsos3-admin folder and link your plugin</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>npm link YOUR_PLUGIN_NAME
+</pre></div>
+</div>
+<p>To start the development, cd to your plugin folder</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>npm run build:watch
+</pre></div>
+</div>
+<p>Then also start the istsos3-admin module. cd to its folder and</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>npm start
+</pre></div>
+</div>
+<p>To Build the component</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>yarn build
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo-banner-index.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Plugin Development</a><ul>
+<li><a class="reference internal" href="#python-plugins">Python plugins</a></li>
+<li><a class="reference internal" href="#web-interfaces">Web Interfaces</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="architecture.html"
+                        title="previous chapter">Architecture</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="entities.html"
+                        title="next chapter">Entities</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/plugins.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="entities.html" title="Entities"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="architecture.html" title="Architecture"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright Institute of Eath Science - SUPSI 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

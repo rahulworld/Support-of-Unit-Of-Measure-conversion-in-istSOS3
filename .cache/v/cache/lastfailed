@@ -1,0 +1,4 @@
+{
+  "istsos/test/actions/servers/rest/test_observedProperties.py::TestObservedProperties::()::test_execute": true,
+  "istsos/test/actions/servers/rest/test_uom.py::TestUom::()::test_execute": true
+}

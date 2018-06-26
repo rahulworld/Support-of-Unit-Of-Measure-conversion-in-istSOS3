@@ -1,0 +1,209 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Postgres &#8212; istSOS 3.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Unit testing" href="testing.html" />
+    <link rel="prev" title="Database" href="db.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="testing.html" title="Unit testing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="db.html" title="Database"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="db.html" accesskey="U">Database</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="postgres">
+<span id="db-postgres"></span><h1>Postgres<a class="headerlink" href="#postgres" title="Permalink to this headline">¶</a></h1>
+<p>Here the entity relationship representation of the PostgreSQL implementation.</p>
+<div class="section" id="default-workspace">
+<h2>Default workspace<a class="headerlink" href="#default-workspace" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/postgresql-database-default.jpg" src="_images/postgresql-database-default.jpg" />
+<div class="section" id="insertsensor-tables">
+<h3>InsertSensor tables<a class="headerlink" href="#insertsensor-tables" title="Permalink to this headline">¶</a></h3>
+<p>As soon an <em>insertSensor</em> request is done, istSOS stores into the followings
+table the data:</p>
+<blockquote>
+<div><ul class="simple">
+<li>offerings</li>
+<li>off_obs_type</li>
+<li>off_obs_prop</li>
+</ul>
+</div></blockquote>
+<p>Depending on the <a class="reference internal" href="systemtypes.html#systemtypes"><span class="std std-ref">System Types classification</span></a> a basic table with default columns that will
+contain the measurements is also created into the schema named as “data”.</p>
+<p>Considering that during an <em>insertSensor</em> request there is not an explicit
+declaration between observableProperty and and the observationType, the
+relation will be stored during the first <em>insertObservation</em> request.</p>
+<p>In particular, during an <em>insertObsevation</em> request, the relation between the
+observation_types and uoms table and the <strong>off_obs_prop</strong> will be set. During this
+operation also in the <em>data table</em> will be added the corresponding columns
+in accordance to the relation of the <strong>off_obs_prop</strong> table.</p>
+</div>
+</div>
+<div class="section" id="data-containers">
+<h2>Data containers<a class="headerlink" href="#data-containers" title="Permalink to this headline">¶</a></h2>
+<p>Each <a class="reference internal" href="systemtypes.html#systemtypes"><span class="std std-ref">System Types classification</span></a> is implemented diffently to satisfy particular
+requirements related to the System Type.</p>
+<div class="section" id="point-timeseries-observation">
+<h3>Point TimeSeries Observation<a class="headerlink" href="#point-timeseries-observation" title="Permalink to this headline">¶</a></h3>
+<p>Point TimeSeries Observation table structure is the simplest and most common
+(ex: Meteo Station). The feature of interest is stored inside the offerings
+table (offerings.foi_geom).</p>
+<img alt="_images/postgresql-database-point-timeseries-observation.jpg" src="_images/postgresql-database-point-timeseries-observation.jpg" />
+</div>
+<div class="section" id="mobile-timeseries-observation">
+<h3>Mobile TimeSeries Observation<a class="headerlink" href="#mobile-timeseries-observation" title="Permalink to this headline">¶</a></h3>
+<p>Mobile TimeSeries Observation table structure looks like the Point TimeSeries
+Observation, but in addition in the data table the actual position is stored
+together with measurements (ex: Formula 1 car sending real-time data from
+sensors at different location and time).</p>
+<img alt="_images/postgresql-database-mobile-timeseries-observation.jpg" src="_images/postgresql-database-mobile-timeseries-observation.jpg" />
+</div>
+<div class="section" id="trajectory-observation">
+<h3>Trajectory Observation<a class="headerlink" href="#trajectory-observation" title="Permalink to this headline">¶</a></h3>
+<p>The trajectory observation is an O&amp;M pattern where the time series of data is
+sent together with a <a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve">SF_SamplingCurve</a>
+feature of interest representing the trajectory in which the measurements has
+been done at a certain distance from the beginning.</p>
+<img alt="_images/postgresql-database-trajectory-observation.jpg" src="_images/postgresql-database-trajectory-observation.jpg" />
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The benefit of linear referencing models is that the dependent spatial
+observations do not need to be separately recorded from the base
+observations, and updates to the base observation layer can be carried
+out knowing that the dependent observations will automatically track the
+new geometry (src <a class="reference external" href="http://workshops.boundlessgeo.com/postgis-intro/linear_referencing.html">Introduction to PostGIS</a>).</p>
+</div>
+</div>
+<div class="section" id="profile-observation">
+<h3>Profile Observation<a class="headerlink" href="#profile-observation" title="Permalink to this headline">¶</a></h3>
+<p>The profile observation O&amp;M pattern is from the same family of the trajectory
+observations.The time series of data is sent together with a <a class="reference external" href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve">SF_SamplingCurve</a>
+feature of interest representing the profile in which the measurements has
+been done.</p>
+<img alt="_images/postgresql-database-profile-observation.jpg" src="_images/postgresql-database-profile-observation.jpg" />
+</div>
+<div class="section" id="specimen-observation">
+<h3>Specimen Observation<a class="headerlink" href="#specimen-observation" title="Permalink to this headline">¶</a></h3>
+<p>The specimen observation O&amp;M pattern differs from others because the feature of
+interest is a physical sample taken off at specific location. The data are sent
+with a reference to the specimen. The specimen is inserted previously.</p>
+<img alt="_images/postgresql-database-specimen-observation.jpg" src="_images/postgresql-database-specimen-observation.jpg" />
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo-banner-index.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Postgres</a><ul>
+<li><a class="reference internal" href="#default-workspace">Default workspace</a><ul>
+<li><a class="reference internal" href="#insertsensor-tables">InsertSensor tables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#data-containers">Data containers</a><ul>
+<li><a class="reference internal" href="#point-timeseries-observation">Point TimeSeries Observation</a></li>
+<li><a class="reference internal" href="#mobile-timeseries-observation">Mobile TimeSeries Observation</a></li>
+<li><a class="reference internal" href="#trajectory-observation">Trajectory Observation</a></li>
+<li><a class="reference internal" href="#profile-observation">Profile Observation</a></li>
+<li><a class="reference internal" href="#specimen-observation">Specimen Observation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="db.html"
+                        title="previous chapter">Database</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="testing.html"
+                        title="next chapter">Unit testing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/db-postgres.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="testing.html" title="Unit testing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="db.html" title="Database"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="db.html" >Database</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright Institute of Eath Science - SUPSI 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,190 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Getting observations &#8212; istSOS 3.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Extra API" href="api.html" />
+    <link rel="prev" title="Inserting new speciments" href="speciment.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="api.html" title="Extra API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="speciment.html" title="Inserting new speciments"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-observations">
+<span id="getobservation"></span><h1>Getting observations<a class="headerlink" href="#getting-observations" title="Permalink to this headline">¶</a></h1>
+<p>A GetObservation operation request contains parameters that constrain the
+observations to be retrieved from a SOS.</p>
+<p>Here the most important requirements of an SOS server implementation.</p>
+<div class="admonition-requirement-29-ogc-12-006 admonition">
+<p class="first admonition-title">Requirement 29 (OGC 12-006)</p>
+<p class="last">The SOS returns all observations that match the specified parameter values.
+The filter parameters (e.g., observedProperty , procedure , or
+temporalFilter) shall be connected with an implicit AND. The values of
+each of the parameters shall be connected with an implicit OR.
+[<a class="reference external" href="http://www.opengis.net/spec/SOS/2.0/req/core/go-parameters">http://www.opengis.net/spec/SOS/2.0/req/core/go-parameters</a>]</p>
+</div>
+<div class="admonition-requirement-30-ogc-12-006 admonition">
+<p class="first admonition-title">Requirement 30 (OGC 12-006)</p>
+<p class="last">If an optional parameter of a GetObservation request is not included in the
+request, the filter (represented by the parameter) shall not be applied to
+the observation set which will be returned by the SOS server.
+[<a class="reference external" href="http://www.opengis.net/spec/SOS/2.0/req/core/go-omitting-parameters">http://www.opengis.net/spec/SOS/2.0/req/core/go-omitting-parameters</a>]</p>
+</div>
+<p>For example, in consequence of Requirement 30, an SOS server returns
+observations of all time to the client if the temporal filter is omitted.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Multiplicity and use</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>procedure</td>
+<td>Zero or many (Optional)</td>
+</tr>
+<tr class="row-odd"><td>offering</td>
+<td>Zero or many (Optional)</td>
+</tr>
+<tr class="row-even"><td>observedPropertiy</td>
+<td>Zero or many (Optional)</td>
+</tr>
+<tr class="row-odd"><td>temporalFilter</td>
+<td>Zero or many (Optional)</td>
+</tr>
+<tr class="row-even"><td>featureOfInterest</td>
+<td>Zero or one (Optional)</td>
+</tr>
+<tr class="row-odd"><td>spatialFilter</td>
+<td>Zero or one (Optional)</td>
+</tr>
+<tr class="row-even"><td>responseFormat</td>
+<td>Zero or one (Optional)</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="the-kvp-requests">
+<h2>The KVP requests<a class="headerlink" href="#the-kvp-requests" title="Permalink to this headline">¶</a></h2>
+<p>Data array result:</p>
+<p>temporalFilter=om:phenomenonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00</p>
+<p><strong>Temporal filtering</strong></p>
+<p>Filter by phenomenonTime:</p>
+<p>Time periods:
+temporalFilter=om:phenomenonTime,2017-06-12T00:00:00+02:00/2017-07-13T00:00:00+02:00</p>
+<p>Time instant:
+temporalFilter=om:phenomenonTime,2017-06-12T12:10:00+02:00</p>
+<p>Latest:
+temporalFilter=om:phenomenonTime,latest</p>
+<p>Last week:
+temporalFilter=om:phenomenonTime,lastweek</p>
+<p>Last week stats:
+temporalFilter=om:phenomenonTime,lastweekstats</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo-banner-index.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting observations</a><ul>
+<li><a class="reference internal" href="#the-kvp-requests">The KVP requests</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="speciment.html"
+                        title="previous chapter">Inserting new speciments</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="next chapter">Extra API</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/getobservation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="api.html" title="Extra API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="speciment.html" title="Inserting new speciments"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright Institute of Eath Science - SUPSI 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

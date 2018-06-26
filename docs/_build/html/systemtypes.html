@@ -1,0 +1,755 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>System Types classification &#8212; istSOS 3.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Inserting new sensors" href="insertsensor.html" />
+    <link rel="prev" title="Welcome to istSOS3’s documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="insertsensor.html" title="Inserting new sensors"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to istSOS3’s documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="system-types-classification">
+<span id="systemtypes"></span><h1>System Types classification<a class="headerlink" href="#system-types-classification" title="Permalink to this headline">¶</a></h1>
+<p>istSOS 3 supports various system types classification. Before inserting a new
+sensor you should analyse which system type best fit your sensor network
+configuration. As a reference istSOS follows the <a class="reference external" href="http://inspire.ec.europa.eu/id/document/tg/d2.9-o%26m-swe">Guidelines for the use of
+Observations &amp; Measurements and Sensor Web Enablement-related
+standards in INSPIRE</a>.</p>
+<p>Here we will cover some of the documented O&amp;M Design Patterns:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Point TimeSeries Observation</li>
+<li>Trajectory Observation</li>
+<li>Profile Observation</li>
+<li>Specimen TimeSeries Observation</li>
+</ul>
+</div></blockquote>
+<p>As you si all supported configuration are “insitu”. That suppose that the
+measurements are stricly connected with the plase where the observation are
+sampled.</p>
+<div class="section" id="point-timeseries-observation">
+<h2>Point TimeSeries Observation<a class="headerlink" href="#point-timeseries-observation" title="Permalink to this headline">¶</a></h2>
+<p>systemType: <strong>pointTimeSeriesObservation</strong></p>
+<p>An example of such case could be an air quality monitoring station providing
+ozone concentration measurements. The featureOfInterest represents the direct
+surrounds of the air intake (i.e. the air bubble surrounding the air intake).
+The location for the measurements is provided through this featureOfInterest.</p>
+<p>InsertSensor example:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;swes:InsertSensor</span>
+    <span class="na">xmlns:swes=</span><span class="s">&quot;http://www.opengis.net/swes/2.0&quot;</span>
+    <span class="na">xmlns:sos=</span><span class="s">&quot;http://www.opengis.net/sos/2.0&quot;</span>
+    <span class="na">xmlns:swe=</span><span class="s">&quot;http://www.opengis.net/swe/1.0.1&quot;</span>
+    <span class="na">xmlns:sml=</span><span class="s">&quot;http://www.opengis.net/sensorML/1.0.1&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml&quot;</span>
+    <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+    <span class="na">service=</span><span class="s">&quot;SOS&quot;</span>
+    <span class="na">version=</span><span class="s">&quot;2.0.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;swes:procedureDescriptionFormat&gt;</span>http://www.opengis.net/sensorML/1.0.1<span class="nt">&lt;/swes:procedureDescriptionFormat&gt;</span>
+    <span class="nt">&lt;swes:procedureDescription&gt;</span>
+        <span class="nt">&lt;sml:SensorML</span> <span class="na">version=</span><span class="s">&quot;1.0.1&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;sml:member&gt;</span>
+                <span class="nt">&lt;sml:System&gt;</span>
+                    <span class="nt">&lt;sml:identification&gt;</span>
+                        <span class="nt">&lt;sml:IdentifierList&gt;</span>
+                            <span class="nt">&lt;sml:identifier</span> <span class="na">name=</span><span class="s">&quot;uniqueID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;sml:Term</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:identifier:OGC:uniqueID&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;sml:value&gt;</span>breganzona<span class="nt">&lt;/sml:value&gt;</span>
+                                <span class="nt">&lt;/sml:Term&gt;</span>
+                            <span class="nt">&lt;/sml:identifier&gt;</span>
+                        <span class="nt">&lt;/sml:IdentifierList&gt;</span>
+                    <span class="nt">&lt;/sml:identification&gt;</span>
+                    <span class="nt">&lt;sml:classification&gt;</span>
+                        <span class="nt">&lt;sml:ClassifierList&gt;</span>
+                            <span class="nt">&lt;sml:classifier</span> <span class="na">name=</span><span class="s">&quot;systemType&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;sml:Term</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:classifier:x-istsos:1.0:systemType&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;sml:value&gt;</span>insitu-fixed-point<span class="nt">&lt;/sml:value&gt;</span>
+                                <span class="nt">&lt;/sml:Term&gt;</span>
+                            <span class="nt">&lt;/sml:classifier&gt;</span>
+                        <span class="nt">&lt;/sml:ClassifierList&gt;</span>
+                    <span class="nt">&lt;/sml:classification&gt;</span>
+                    <span class="nt">&lt;sml:capabilities</span> <span class="na">name=</span><span class="s">&quot;offering&quot;</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;swe:SimpleDataRecord&gt;</span>
+                            <span class="nt">&lt;swe:field</span> <span class="na">name=</span><span class="s">&quot;offeringID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;swe:Text&gt;</span>
+                                    <span class="nt">&lt;swe:value&gt;</span>breganzona<span class="nt">&lt;/swe:value&gt;</span>
+                                <span class="nt">&lt;/swe:Text&gt;</span>
+                            <span class="nt">&lt;/swe:field&gt;</span>
+                        <span class="nt">&lt;/swe:SimpleDataRecord&gt;</span>
+                    <span class="nt">&lt;/sml:capabilities&gt;</span>
+                    <span class="nt">&lt;sml:capabilities</span> <span class="na">name=</span><span class="s">&quot;featuresOfInterest&quot;</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;swe:SimpleDataRecord&gt;</span>
+                            <span class="nt">&lt;swe:field</span> <span class="na">name=</span><span class="s">&quot;featureOfInterestID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;swe:Text&gt;</span>
+                                    <span class="nt">&lt;swe:value&gt;</span>breganzona<span class="nt">&lt;/swe:value&gt;</span>
+                                <span class="nt">&lt;/swe:Text&gt;</span>
+                            <span class="nt">&lt;/swe:field&gt;</span>
+                        <span class="nt">&lt;/swe:SimpleDataRecord&gt;</span>
+                    <span class="nt">&lt;/sml:capabilities&gt;</span>
+                    <span class="nt">&lt;sml:location&gt;</span>
+                        <span class="nt">&lt;gml:Point</span>
+                                <span class="na">gml:name=</span><span class="s">&quot;breganzona&quot;</span>
+                                <span class="na">srsName=</span><span class="s">&quot;http://www.opengis.net/def/crs/EPSG/0/4326&quot;</span><span class="nt">&gt;</span>
+                            <span class="nt">&lt;gml:coordinates&gt;</span>46.001470,8.919284,510.3<span class="nt">&lt;/gml:coordinates&gt;</span>
+                        <span class="nt">&lt;/gml:Point&gt;</span>
+                    <span class="nt">&lt;/sml:location&gt;</span>
+                <span class="nt">&lt;/sml:System&gt;</span>
+            <span class="nt">&lt;/sml:member&gt;</span>
+        <span class="nt">&lt;/sml:SensorML&gt;</span>
+    <span class="nt">&lt;/swes:procedureDescription&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:metadata&gt;</span>
+        <span class="nt">&lt;sos:SosInsertionMetadata&gt;</span>
+            <span class="nt">&lt;sos:observationType&gt;</span>
+                http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement
+            <span class="nt">&lt;/sos:observationType&gt;</span>
+            <span class="nt">&lt;sos:featureOfInterestType&gt;</span>
+                http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint
+            <span class="nt">&lt;/sos:featureOfInterestType&gt;</span>
+        <span class="nt">&lt;/sos:SosInsertionMetadata&gt;</span>
+    <span class="nt">&lt;/swes:metadata&gt;</span>
+<span class="nt">&lt;/swes:InsertSensor&gt;</span>
+</pre></div>
+</div>
+<p>InsertObservation example:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;sos:InsertObservation</span> <span class="na">service=</span><span class="s">&quot;SOS&quot;</span> <span class="na">version=</span><span class="s">&quot;2.0.0&quot;</span>
+    <span class="na">xmlns:sos=</span><span class="s">&quot;http://www.opengis.net/sos/2.0&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+    <span class="na">xmlns:swe=</span><span class="s">&quot;http://www.opengis.net/swe/2.0&quot;</span>
+    <span class="na">xmlns:swes=</span><span class="s">&quot;http://www.opengis.net/swes/2.0&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml/3.2&quot;</span>
+    <span class="na">xmlns:ogc=</span><span class="s">&quot;http://www.opengis.net/ogc&quot;</span>
+    <span class="na">xmlns:om=</span><span class="s">&quot;http://www.opengis.net/om/2.0&quot;</span>
+    <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;sos:offering&gt;</span>breganzona<span class="nt">&lt;/sos:offering&gt;</span>
+    <span class="nt">&lt;sos:observation&gt;</span>
+        <span class="nt">&lt;om:OM_Observation</span> <span class="na">id=</span><span class="s">&quot;f1&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;om:type</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:phenomenonTime&gt;</span>
+                <span class="nt">&lt;gml:TimeInstant</span> <span class="na">gml:id=</span><span class="s">&quot;phenomenonTime&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;gml:timePosition&gt;</span>2017-05-08T16:50:00.000+00:00<span class="nt">&lt;/gml:timePosition&gt;</span>
+                <span class="nt">&lt;/gml:TimeInstant&gt;</span>
+            <span class="nt">&lt;/om:phenomenonTime&gt;</span>
+            <span class="nt">&lt;om:resultTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:procedure</span> <span class="na">xlink:href=</span><span class="s">&quot;breganzona&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:observedProperty</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:featureOfInterest</span> <span class="na">xlink:href=</span><span class="s">&quot;breganzona&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:result</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:MeasureType&quot;</span> <span class="na">uom=</span><span class="s">&quot;°C&quot;</span><span class="nt">&gt;</span>22.4<span class="nt">&lt;/om:result&gt;</span>
+        <span class="nt">&lt;/om:OM_Observation&gt;</span>
+    <span class="nt">&lt;/sos:observation&gt;</span>
+    <span class="nt">&lt;sos:observation&gt;</span>
+        <span class="nt">&lt;om:OM_Observation</span> <span class="na">id=</span><span class="s">&quot;f2&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;om:type</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:phenomenonTime&gt;</span>
+                <span class="nt">&lt;gml:TimeInstant</span> <span class="na">gml:id=</span><span class="s">&quot;phenomenonTime&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;gml:timePosition&gt;</span>2017-05-08T17:00:00.000+00:00<span class="nt">&lt;/gml:timePosition&gt;</span>
+                <span class="nt">&lt;/gml:TimeInstant&gt;</span>
+            <span class="nt">&lt;/om:phenomenonTime&gt;</span>
+            <span class="nt">&lt;om:resultTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:procedure</span> <span class="na">xlink:href=</span><span class="s">&quot;breganzona&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:observedProperty</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:featureOfInterest</span> <span class="na">xlink:href=</span><span class="s">&quot;breganzona&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:result</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:MeasureType&quot;</span> <span class="na">uom=</span><span class="s">&quot;°C&quot;</span><span class="nt">&gt;</span>22.1<span class="nt">&lt;/om:result&gt;</span>
+        <span class="nt">&lt;/om:OM_Observation&gt;</span>
+    <span class="nt">&lt;/sos:observation&gt;</span>
+    <span class="nt">&lt;sos:observation&gt;</span>
+        <span class="nt">&lt;om:OM_Observation&gt;</span>
+            <span class="nt">&lt;om:type</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:phenomenonTime&gt;</span>
+                <span class="nt">&lt;gml:TimeInstant</span> <span class="na">gml:id=</span><span class="s">&quot;phenomenonTime&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;gml:timePosition&gt;</span>2017-05-08T17:10:00.000+00:00<span class="nt">&lt;/gml:timePosition&gt;</span>
+                <span class="nt">&lt;/gml:TimeInstant&gt;</span>
+            <span class="nt">&lt;/om:phenomenonTime&gt;</span>
+            <span class="nt">&lt;om:resultTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:procedure</span> <span class="na">xlink:href=</span><span class="s">&quot;breganzona&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:observedProperty</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:featureOfInterest</span> <span class="na">xlink:href=</span><span class="s">&quot;breganzona&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:result</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:MeasureType&quot;</span> <span class="na">uom=</span><span class="s">&quot;°C&quot;</span><span class="nt">&gt;</span>20.8<span class="nt">&lt;/om:result&gt;</span>
+        <span class="nt">&lt;/om:OM_Observation&gt;</span>
+    <span class="nt">&lt;/sos:observation&gt;</span>
+<span class="nt">&lt;/sos:InsertObservation&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mobile-timeseries-observation">
+<h2>Mobile TimeSeries Observation<a class="headerlink" href="#mobile-timeseries-observation" title="Permalink to this headline">¶</a></h2>
+<p>systemType: <strong>mobileTimeSeriesObservation</strong></p>
+<p>InsertSensor example:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;swes:InsertSensor</span>
+    <span class="na">xmlns:swes=</span><span class="s">&quot;http://www.opengis.net/swes/2.0&quot;</span>
+    <span class="na">xmlns:sos=</span><span class="s">&quot;http://www.opengis.net/sos/2.0&quot;</span>
+    <span class="na">xmlns:swe=</span><span class="s">&quot;http://www.opengis.net/swe/1.0.1&quot;</span>
+    <span class="na">xmlns:sml=</span><span class="s">&quot;http://www.opengis.net/sensorML/1.0.1&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml&quot;</span>
+    <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+    <span class="na">service=</span><span class="s">&quot;SOS&quot;</span>
+    <span class="na">version=</span><span class="s">&quot;2.0.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;swes:procedureDescriptionFormat&gt;</span>http://www.opengis.net/sensorML/1.0.1<span class="nt">&lt;/swes:procedureDescriptionFormat&gt;</span>
+    <span class="nt">&lt;swes:procedureDescription&gt;</span>
+        <span class="nt">&lt;sml:SensorML</span> <span class="na">version=</span><span class="s">&quot;1.0.1&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;sml:member&gt;</span>
+                <span class="nt">&lt;sml:System&gt;</span>
+                    <span class="nt">&lt;sml:identification&gt;</span>
+                        <span class="nt">&lt;sml:IdentifierList&gt;</span>
+                            <span class="nt">&lt;sml:identifier</span> <span class="na">name=</span><span class="s">&quot;uniqueID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;sml:Term</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:identifier:OGC:uniqueID&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;sml:value&gt;</span>taxi_42<span class="nt">&lt;/sml:value&gt;</span>
+                                <span class="nt">&lt;/sml:Term&gt;</span>
+                            <span class="nt">&lt;/sml:identifier&gt;</span>
+                        <span class="nt">&lt;/sml:IdentifierList&gt;</span>
+                    <span class="nt">&lt;/sml:identification&gt;</span>
+                    <span class="nt">&lt;sml:classification&gt;</span>
+                        <span class="nt">&lt;sml:ClassifierList&gt;</span>
+                            <span class="nt">&lt;sml:classifier</span> <span class="na">name=</span><span class="s">&quot;systemType&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;sml:Term</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:classifier:x-istsos:1.0:systemType&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;sml:value&gt;</span>mobileTimeSeriesObservation<span class="nt">&lt;/sml:value&gt;</span>
+                                <span class="nt">&lt;/sml:Term&gt;</span>
+                            <span class="nt">&lt;/sml:classifier&gt;</span>
+                        <span class="nt">&lt;/sml:ClassifierList&gt;</span>
+                    <span class="nt">&lt;/sml:classification&gt;</span>
+                    <span class="nt">&lt;sml:capabilities</span> <span class="na">name=</span><span class="s">&quot;offering&quot;</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;swe:SimpleDataRecord&gt;</span>
+                            <span class="nt">&lt;swe:field</span> <span class="na">name=</span><span class="s">&quot;offeringID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;swe:Text&gt;</span>
+                                    <span class="nt">&lt;swe:value&gt;</span>taxi_42<span class="nt">&lt;/swe:value&gt;</span>
+                                <span class="nt">&lt;/swe:Text&gt;</span>
+                            <span class="nt">&lt;/swe:field&gt;</span>
+                        <span class="nt">&lt;/swe:SimpleDataRecord&gt;</span>
+                    <span class="nt">&lt;/sml:capabilities&gt;</span>
+                    <span class="nt">&lt;sml:capabilities</span> <span class="na">name=</span><span class="s">&quot;featuresOfInterest&quot;</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;swe:SimpleDataRecord&gt;</span>
+                            <span class="nt">&lt;swe:field</span> <span class="na">name=</span><span class="s">&quot;featureOfInterestID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;swe:Text&gt;</span>
+                                    <span class="nt">&lt;swe:value&gt;</span>area_123<span class="nt">&lt;/swe:value&gt;</span>
+                                <span class="nt">&lt;/swe:Text&gt;</span>
+                            <span class="nt">&lt;/swe:field&gt;</span>
+                        <span class="nt">&lt;/swe:SimpleDataRecord&gt;</span>
+                    <span class="nt">&lt;/sml:capabilities&gt;</span>
+                <span class="nt">&lt;/sml:System&gt;</span>
+            <span class="nt">&lt;/sml:member&gt;</span>
+        <span class="nt">&lt;/sml:SensorML&gt;</span>
+    <span class="nt">&lt;/swes:procedureDescription&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:vehicle:occupied<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:vehicle:location<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:metadata&gt;</span>
+        <span class="nt">&lt;sos:SosInsertionMetadata&gt;</span>
+            <span class="nt">&lt;sos:observationType&gt;</span>
+                http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation
+            <span class="nt">&lt;/sos:observationType&gt;</span>
+            <span class="nt">&lt;sos:observationType&gt;</span>
+                http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation
+            <span class="nt">&lt;/sos:observationType&gt;</span>
+            <span class="nt">&lt;sos:featureOfInterestType&gt;</span>
+                http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint
+            <span class="nt">&lt;/sos:featureOfInterestType&gt;</span>
+        <span class="nt">&lt;/sos:SosInsertionMetadata&gt;</span>
+    <span class="nt">&lt;/swes:metadata&gt;</span>
+<span class="nt">&lt;/swes:InsertSensor&gt;</span>
+</pre></div>
+</div>
+<p>InsertObservation example:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;sos:InsertObservation</span> <span class="na">service=</span><span class="s">&quot;SOS&quot;</span> <span class="na">version=</span><span class="s">&quot;2.0.0&quot;</span>
+    <span class="na">xmlns:sos=</span><span class="s">&quot;http://www.opengis.net/sos/2.0&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+    <span class="na">xmlns:swe=</span><span class="s">&quot;http://www.opengis.net/swe/2.0&quot;</span>
+    <span class="na">xmlns:swes=</span><span class="s">&quot;http://www.opengis.net/swes/2.0&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml/3.2&quot;</span>
+    <span class="na">xmlns:ogc=</span><span class="s">&quot;http://www.opengis.net/ogc&quot;</span>
+    <span class="na">xmlns:om=</span><span class="s">&quot;http://www.opengis.net/om/2.0&quot;</span>
+    <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;sos:offering&gt;</span>taxi_42<span class="nt">&lt;/sos:offering&gt;</span>
+    <span class="nt">&lt;sos:observation&gt;</span>
+        <span class="nt">&lt;om:OM_Observation</span> <span class="na">id=</span><span class="s">&quot;f1&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;om:type</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:phenomenonTime&gt;</span>
+                <span class="nt">&lt;gml:TimeInstant</span> <span class="na">gml:id=</span><span class="s">&quot;phenomenonTime&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;gml:timePosition&gt;</span>2017-05-08T16:50:00.000+00:00<span class="nt">&lt;/gml:timePosition&gt;</span>
+                <span class="nt">&lt;/gml:TimeInstant&gt;</span>
+            <span class="nt">&lt;/om:phenomenonTime&gt;</span>
+            <span class="nt">&lt;om:resultTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:procedure</span> <span class="na">xlink:href=</span><span class="s">&quot;taxi_42&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:observedProperty</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:vehicle:occupied&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:featureOfInterest</span> <span class="na">xlink:href=</span><span class="s">&quot;area_123&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:result</span> <span class="na">xsi:type=</span><span class="s">&quot;xs:boolean&quot;</span><span class="nt">&gt;</span>true<span class="nt">&lt;/om:result&gt;</span>
+        <span class="nt">&lt;/om:OM_Observation&gt;</span>
+    <span class="nt">&lt;/sos:observation&gt;</span>
+    <span class="nt">&lt;sos:observation&gt;</span>
+        <span class="nt">&lt;om:OM_Observation</span> <span class="na">id=</span><span class="s">&quot;f2&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;om:type</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:phenomenonTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:resultTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:procedure</span> <span class="na">xlink:href=</span><span class="s">&quot;taxi_42&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:observedProperty</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:vehicle:location&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:featureOfInterest</span> <span class="na">xlink:href=</span><span class="s">&quot;area_123&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:result</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:GeometryPropertyType&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;gml:Point&gt;</span>
+                    <span class="nt">&lt;gml:pos</span> <span class="na">srsName=</span><span class="s">&quot;http://www.opengis.net/def/crs/EPSG/0/4326&quot;</span><span class="nt">&gt;</span>46.00936 8.93369<span class="nt">&lt;/gml:pos&gt;</span>
+                <span class="nt">&lt;/gml:Point&gt;</span>
+            <span class="nt">&lt;/om:result&gt;</span>
+        <span class="nt">&lt;/om:OM_Observation&gt;</span>
+    <span class="nt">&lt;/sos:observation&gt;</span>
+<span class="nt">&lt;/sos:InsertObservation&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="trajectory-observation">
+<h2>Trajectory Observation<a class="headerlink" href="#trajectory-observation" title="Permalink to this headline">¶</a></h2>
+<p>systemType: <strong>trajectoryObservation</strong></p>
+<p>An example of such case could be a moving ship making sea surface temperature
+measurements, the featureOfInterest being the trajectory of the ship.</p>
+<p>The actual locations of individual measurements along the trajectory are
+provided with the results. All measurements are located within the trajectory
+with either relative position (from start of the trajectory) or absolute
+position (i.e. coordinates). Each measurement is made at a separate point along
+the trajectory and at a separate time. The result is therefore a set of time,
+location, value triples.</p>
+<p>InsertSensor example:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;swes:InsertSensor</span>
+    <span class="na">xmlns:swes=</span><span class="s">&quot;http://www.opengis.net/swes/2.0&quot;</span>
+    <span class="na">xmlns:sos=</span><span class="s">&quot;http://www.opengis.net/sos/2.0&quot;</span>
+    <span class="na">xmlns:swe=</span><span class="s">&quot;http://www.opengis.net/swe/1.0.1&quot;</span>
+    <span class="na">xmlns:sml=</span><span class="s">&quot;http://www.opengis.net/sensorML/1.0.1&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml&quot;</span>
+    <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+    <span class="na">service=</span><span class="s">&quot;SOS&quot;</span>
+    <span class="na">version=</span><span class="s">&quot;2.0.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;swes:procedureDescriptionFormat&gt;</span>http://www.opengis.net/sensorML/1.0.1<span class="nt">&lt;/swes:procedureDescriptionFormat&gt;</span>
+    <span class="nt">&lt;swes:procedureDescription&gt;</span>
+        <span class="nt">&lt;sml:SensorML</span> <span class="na">version=</span><span class="s">&quot;1.0.1&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;sml:member&gt;</span>
+                <span class="nt">&lt;sml:System&gt;</span>
+                    <span class="nt">&lt;sml:identification&gt;</span>
+                        <span class="nt">&lt;sml:IdentifierList&gt;</span>
+                            <span class="nt">&lt;sml:identifier</span> <span class="na">name=</span><span class="s">&quot;uniqueID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;sml:Term</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:identifier:OGC:uniqueID&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;sml:value&gt;</span>rally_car<span class="nt">&lt;/sml:value&gt;</span>
+                                <span class="nt">&lt;/sml:Term&gt;</span>
+                            <span class="nt">&lt;/sml:identifier&gt;</span>
+                        <span class="nt">&lt;/sml:IdentifierList&gt;</span>
+                    <span class="nt">&lt;/sml:identification&gt;</span>
+                    <span class="nt">&lt;sml:classification&gt;</span>
+                        <span class="nt">&lt;sml:ClassifierList&gt;</span>
+                            <span class="nt">&lt;sml:classifier</span> <span class="na">name=</span><span class="s">&quot;systemType&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;sml:Term</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:classifier:x-istsos:1.0:systemType&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;sml:value&gt;</span>pointTimeSeriesObservation<span class="nt">&lt;/sml:value&gt;</span>
+                                <span class="nt">&lt;/sml:Term&gt;</span>
+                            <span class="nt">&lt;/sml:classifier&gt;</span>
+                        <span class="nt">&lt;/sml:ClassifierList&gt;</span>
+                    <span class="nt">&lt;/sml:classification&gt;</span>
+                    <span class="nt">&lt;sml:capabilities</span> <span class="na">name=</span><span class="s">&quot;offering&quot;</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;swe:SimpleDataRecord&gt;</span>
+                            <span class="nt">&lt;swe:field</span> <span class="na">name=</span><span class="s">&quot;offeringID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;swe:Text&gt;</span>
+                                    <span class="nt">&lt;swe:value&gt;</span>rally_car<span class="nt">&lt;/swe:value&gt;</span>
+                                <span class="nt">&lt;/swe:Text&gt;</span>
+                            <span class="nt">&lt;/swe:field&gt;</span>
+                        <span class="nt">&lt;/swe:SimpleDataRecord&gt;</span>
+                    <span class="nt">&lt;/sml:capabilities&gt;</span>
+                <span class="nt">&lt;/sml:System&gt;</span>
+            <span class="nt">&lt;/sml:member&gt;</span>
+        <span class="nt">&lt;/sml:SensorML&gt;</span>
+    <span class="nt">&lt;/swes:procedureDescription&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:vehicle:speed<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:track:linear:reference<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:metadata&gt;</span>
+        <span class="nt">&lt;sos:SosInsertionMetadata&gt;</span>
+            <span class="nt">&lt;sos:observationType&gt;</span>
+                http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement
+            <span class="nt">&lt;/sos:observationType&gt;</span>
+            <span class="nt">&lt;sos:featureOfInterestType&gt;</span>
+                http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve
+            <span class="nt">&lt;/sos:featureOfInterestType&gt;</span>
+        <span class="nt">&lt;/sos:SosInsertionMetadata&gt;</span>
+    <span class="nt">&lt;/swes:metadata&gt;</span>
+<span class="nt">&lt;/swes:InsertSensor&gt;</span>
+</pre></div>
+</div>
+<p>InsertObservation example:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;sos:InsertObservation</span> <span class="na">service=</span><span class="s">&quot;SOS&quot;</span> <span class="na">version=</span><span class="s">&quot;2.0.0&quot;</span>
+    <span class="na">xmlns:sos=</span><span class="s">&quot;http://www.opengis.net/sos/2.0&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+    <span class="na">xmlns:swe=</span><span class="s">&quot;http://www.opengis.net/swe/2.0&quot;</span>
+    <span class="na">xmlns:swes=</span><span class="s">&quot;http://www.opengis.net/swes/2.0&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml/3.2&quot;</span>
+    <span class="na">xmlns:ogc=</span><span class="s">&quot;http://www.opengis.net/ogc&quot;</span>
+    <span class="na">xmlns:om=</span><span class="s">&quot;http://www.opengis.net/om/2.0&quot;</span>
+    <span class="na">xmlns:sams=</span><span class="s">&quot;http://www.opengis.net/samplingSpatial/2.0&quot;</span>
+    <span class="na">xmlns:sam=</span><span class="s">&quot;http://www.opengis.net/sampling/2.0&quot;</span>
+    <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;sos:offering&gt;</span>rally_car<span class="nt">&lt;/sos:offering&gt;</span>
+    <span class="nt">&lt;sos:observation&gt;</span>
+        <span class="nt">&lt;om:OM_Observation</span> <span class="na">id=</span><span class="s">&quot;f1&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;om:type</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:phenomenonTime&gt;</span>
+                <span class="nt">&lt;gml:TimePeriod</span> <span class="na">gml:id=</span><span class="s">&quot;phenomenonTime&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;gml:beginPosition&gt;</span>2017-05-08T17:20:00.000+00:00<span class="nt">&lt;/gml:beginPosition&gt;</span>
+                    <span class="nt">&lt;gml:endPosition&gt;</span>2017-05-08T17:52:00.000+00:00<span class="nt">&lt;/gml:endPosition&gt;</span>
+                <span class="nt">&lt;/gml:TimePeriod&gt;</span>
+            <span class="nt">&lt;/om:phenomenonTime&gt;</span>
+            <span class="nt">&lt;om:resultTime&gt;</span>
+                <span class="nt">&lt;gml:TimeInstant</span> <span class="na">gml:id=</span><span class="s">&quot;resultTime&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;gml:timePosition&gt;</span>2017-05-08T18:00:00.000+00:00<span class="nt">&lt;/gml:timePosition&gt;</span>
+                <span class="nt">&lt;/gml:TimeInstant&gt;</span>
+            <span class="nt">&lt;/om:resultTime&gt;</span>
+            <span class="nt">&lt;om:procedure</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;rally_car&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:observedProperty</span> <span class="na">xsi:nil=</span><span class="s">&#39;true&#39;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:featureOfInterest&gt;</span>
+                <span class="nt">&lt;sams:SF_SpatialSamplingFeature&gt;</span>
+                    <span class="nt">&lt;gml:identifier</span> <span class="na">codeSpace=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>valcolla<span class="nt">&lt;/gml:identifier&gt;</span>
+                    <span class="nt">&lt;sam:type</span> <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve&quot;</span><span class="nt">/&gt;</span>
+                    <span class="nt">&lt;sam:sampledFeature</span> <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/nil/OGC/0/unknown&quot;</span><span class="nt">/&gt;</span>
+                    <span class="nt">&lt;sams:shape&gt;</span>
+                        <span class="nt">&lt;gml:LineString</span> <span class="na">srsName=</span><span class="s">&quot;http://www.opengis.net/def/crs/EPSG/0/4326&quot;</span><span class="nt">&gt;</span>
+                            <span class="nt">&lt;gml:posList&gt;</span>
+                                46.059635780296801 8.994412092552219 46.060223825774337 8.997433745462159 46.061954461930128 9.000778955031786 46.06495448547475 9.005033244195106 46.066509521680928 9.008050796801951 46.065846643737828 9.010422990575318 46.065912236333581 9.012169847132256 46.06592614850306 9.012784218735879 46.066923672693697 9.008999831286239 46.067917033510746 9.008737565812728 46.068673414212633 9.007725212298796 46.070999153792634 9.010312802428976 46.072772201831029 9.012205991986022 46.074170109016421 9.015187329520275 46.074700400369935 9.019080982349889 46.076601642069143 9.023046826918122 46.077825485555252 9.027187168534967 46.07929559015394 9.031399530717648 46.079326028609522 9.034018529337294 46.078700654662896 9.035293130598477 46.078959935115314 9.036044124675852 46.078540561804964 9.037066152953063 46.077856870654962 9.037692562337673 46.077980771506844 9.038471910437849 46.077860094099819 9.039050161054439 46.07779309353549 9.040599628752972 46.078389159353407 9.039809076068785 46.078906753937488 9.039791937317942 46.079274302086354 9.039253238709604 46.079697371159966 9.039556548771477 46.080512766293474 9.039160264513486
+                            <span class="nt">&lt;/gml:posList&gt;</span>
+                        <span class="nt">&lt;/gml:LineString&gt;</span>
+                    <span class="nt">&lt;/sams:shape&gt;</span>
+                <span class="nt">&lt;/sams:SF_SpatialSamplingFeature&gt;</span>
+            <span class="nt">&lt;/om:featureOfInterest&gt;</span>
+            <span class="nt">&lt;om:result</span>
+                <span class="na">xsi:type=</span><span class="s">&quot;swe:DataArrayPropertyType&quot;</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;swe:DataArray&gt;</span>
+                    <span class="nt">&lt;swe:elementCount&gt;</span>
+                        <span class="nt">&lt;swe:Count&gt;</span>
+                            <span class="nt">&lt;swe:value&gt;</span>10<span class="nt">&lt;/swe:value&gt;</span>
+                        <span class="nt">&lt;/swe:Count&gt;</span>
+                    <span class="nt">&lt;/swe:elementCount&gt;</span>
+                    <span class="nt">&lt;swe:elementType</span> <span class="na">name=</span><span class="s">&quot;defs&quot;</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;swe:DataRecord&gt;</span>
+                            <span class="nt">&lt;swe:field</span> <span class="na">name=</span><span class="s">&quot;phenomenonTime&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;swe:Time</span> <span class="na">definition=</span><span class="s">&quot;http://www.opengis.net/def/property/OGC/0/PhenomenonTime&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;swe:uom</span> <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/uom/ISO-8601/0/Gregorian&quot;</span><span class="nt">/&gt;</span>
+                                <span class="nt">&lt;/swe:Time&gt;</span>
+                            <span class="nt">&lt;/swe:field&gt;</span>
+                            <span class="nt">&lt;swe:field&gt;</span>
+                                <span class="nt">&lt;swe:Quantity</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:track:linear:reference&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;swe:uom</span> <span class="na">code=</span><span class="s">&quot;m&quot;</span><span class="nt">/&gt;</span>
+                                <span class="nt">&lt;/swe:Quantity&gt;</span>
+                            <span class="nt">&lt;/swe:field&gt;</span>
+                            <span class="nt">&lt;swe:field&gt;</span>
+                                <span class="nt">&lt;swe:Quantity</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:vehicle:speed&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;swe:uom</span> <span class="na">code=</span><span class="s">&quot;km/h&quot;</span><span class="nt">/&gt;</span>
+                                <span class="nt">&lt;/swe:Quantity&gt;</span>
+                            <span class="nt">&lt;/swe:field&gt;</span>
+                        <span class="nt">&lt;/swe:DataRecord&gt;</span>
+                    <span class="nt">&lt;/swe:elementType&gt;</span>
+                    <span class="nt">&lt;swe:encoding&gt;</span>
+                        <span class="nt">&lt;swe:TextEncoding</span>
+                            <span class="na">decimalSeparator=</span><span class="s">&quot;.&quot;</span>
+                            <span class="na">tokenSeparator=</span><span class="s">&quot;,&quot;</span>
+                            <span class="na">blockSeparator=</span><span class="s">&quot;@&quot;</span><span class="nt">/&gt;</span>
+                    <span class="nt">&lt;/swe:encoding&gt;</span>
+                    <span class="nt">&lt;swe:values&gt;</span>
+                        2017-05-08T17:23:46.146+00:00,500,154.2@
+                        2017-05-08T17:28:10.234+00:00,1000,84.1@
+                        2017-05-08T17:30:23.765+00:00,1500,184.15@
+                        2017-05-08T17:34:11.432+00:00,2000,123.4@
+                        2017-05-08T17:36:43.534+00:00,2500,40.3@
+                        2017-05-08T17:39:23.653+00:00,3000,80.23@
+                        2017-05-08T17:45:43.853+00:00,3500,75.21@
+                        2017-05-08T17:46:25.833+00:00,4000,98.2@
+                        2017-05-08T17:49:35.734+00:00,4500,140.4@
+                        2017-05-08T17:52:12.657+00:00,5629.4,189.8
+                    <span class="nt">&lt;/swe:values&gt;</span>
+                <span class="nt">&lt;/swe:DataArray&gt;</span>
+            <span class="nt">&lt;/om:result&gt;</span>
+        <span class="nt">&lt;/om:OM_Observation&gt;</span>
+    <span class="nt">&lt;/sos:observation&gt;</span>
+<span class="nt">&lt;/sos:InsertObservation&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="profile-observation">
+<h2>Profile Observation<a class="headerlink" href="#profile-observation" title="Permalink to this headline">¶</a></h2>
+<p>systemType: <strong>profileObservation</strong></p>
+<p>An example of such case could be a ship measuring the salinity at varying
+depths along a water column, the featureOfInterest being a vertical water
+column at one given ship location. The actual locations of individual
+measurements along the water column are provided with the result. All
+measurements are located within the water column with either relative position
+(from start of water column) or absolute position (i.e. coordinates including
+the depth).</p>
+</div>
+<div class="section" id="specimen-observation">
+<h2>Specimen Observation<a class="headerlink" href="#specimen-observation" title="Permalink to this headline">¶</a></h2>
+<p>systemType: <strong>specimenObservation</strong></p>
+<p>An example of such case would be a sample or specimen taken from the sampled
+feature and analysed once ex situ in an external laboratory.</p>
+<p>InsertSensor example:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;swes:InsertSensor</span>
+    <span class="na">xmlns:swes=</span><span class="s">&quot;http://www.opengis.net/swes/2.0&quot;</span>
+    <span class="na">xmlns:sos=</span><span class="s">&quot;http://www.opengis.net/sos/2.0&quot;</span>
+    <span class="na">xmlns:swe=</span><span class="s">&quot;http://www.opengis.net/swe/1.0.1&quot;</span>
+    <span class="na">xmlns:sml=</span><span class="s">&quot;http://www.opengis.net/sensorML/1.0.1&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+    <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span>
+    <span class="na">service=</span><span class="s">&quot;SOS&quot;</span>
+    <span class="na">version=</span><span class="s">&quot;2.0.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;swes:procedureDescriptionFormat&gt;</span>http://www.opengis.net/sensorML/1.0.1<span class="nt">&lt;/swes:procedureDescriptionFormat&gt;</span>
+    <span class="nt">&lt;swes:procedureDescription&gt;</span>
+        <span class="nt">&lt;sml:SensorML</span> <span class="na">version=</span><span class="s">&quot;1.0.1&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;sml:member&gt;</span>
+                <span class="nt">&lt;sml:System&gt;</span>
+                    <span class="nt">&lt;sml:identification&gt;</span>
+                        <span class="nt">&lt;sml:IdentifierList&gt;</span>
+                            <span class="nt">&lt;sml:identifier</span> <span class="na">name=</span><span class="s">&quot;uniqueID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;sml:Term</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:identifier:OGC:uniqueID&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;sml:value&gt;</span>chemical_analisys<span class="nt">&lt;/sml:value&gt;</span>
+                                <span class="nt">&lt;/sml:Term&gt;</span>
+                            <span class="nt">&lt;/sml:identifier&gt;</span>
+                        <span class="nt">&lt;/sml:IdentifierList&gt;</span>
+                    <span class="nt">&lt;/sml:identification&gt;</span>
+                    <span class="nt">&lt;sml:capabilities</span> <span class="na">name=</span><span class="s">&quot;offering&quot;</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;swe:SimpleDataRecord&gt;</span>
+                            <span class="nt">&lt;swe:field</span> <span class="na">name=</span><span class="s">&quot;offeringID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;swe:Text</span> <span class="na">definition=</span><span class="s">&quot;urn:ogc:def:identifier:OGC:offeringID&quot;</span><span class="nt">&gt;</span>
+                                    <span class="nt">&lt;swe:value&gt;</span>chemical_analisys<span class="nt">&lt;/swe:value&gt;</span>
+                                <span class="nt">&lt;/swe:Text&gt;</span>
+                            <span class="nt">&lt;/swe:field&gt;</span>
+                        <span class="nt">&lt;/swe:SimpleDataRecord&gt;</span>
+                    <span class="nt">&lt;/sml:capabilities&gt;</span>
+                    <span class="nt">&lt;sml:capabilities</span> <span class="na">name=</span><span class="s">&quot;featuresOfInterest&quot;</span><span class="nt">&gt;</span>
+                        <span class="nt">&lt;swe:SimpleDataRecord&gt;</span>
+                            <span class="nt">&lt;swe:field</span> <span class="na">name=</span><span class="s">&quot;featureOfInterestID&quot;</span><span class="nt">&gt;</span>
+                                <span class="nt">&lt;swe:Text&gt;</span>
+                                    <span class="nt">&lt;swe:value&gt;</span>lugano_lake_buoy_1<span class="nt">&lt;/swe:value&gt;</span>
+                                <span class="nt">&lt;/swe:Text&gt;</span>
+                            <span class="nt">&lt;/swe:field&gt;</span>
+                        <span class="nt">&lt;/swe:SimpleDataRecord&gt;</span>
+                    <span class="nt">&lt;/sml:capabilities&gt;</span>
+                    <span class="nt">&lt;sml:location&gt;</span>
+                        <span class="nt">&lt;gml:Point</span>
+                                <span class="na">gml:name=</span><span class="s">&quot;lugano_lake_buoy_1&quot;</span>
+                                <span class="na">srsName=</span><span class="s">&quot;http://www.opengis.net/def/crs/EPSG/0/4326&quot;</span><span class="nt">&gt;</span>
+                            <span class="nt">&lt;gml:coordinates&gt;</span>46.00138,8.96231,270.5<span class="nt">&lt;/gml:coordinates&gt;</span>
+                        <span class="nt">&lt;/gml:Point&gt;</span>
+                    <span class="nt">&lt;/sml:location&gt;</span>
+                <span class="nt">&lt;/sml:System&gt;</span>
+            <span class="nt">&lt;/sml:member&gt;</span>
+        <span class="nt">&lt;/sml:SensorML&gt;</span>
+    <span class="nt">&lt;/swes:procedureDescription&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:water:analysis<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:water:analysis:ph<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:water:analysis:as<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:water:analysis:conductibility<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:observableProperty&gt;</span>urn:ogc:def:parameter:x-istsos:1.0:water:analysis:nh4<span class="nt">&lt;/swes:observableProperty&gt;</span>
+    <span class="nt">&lt;swes:metadata&gt;</span>
+        <span class="nt">&lt;sos:SosInsertionMetadata&gt;</span>
+            <span class="nt">&lt;sos:observationType&gt;</span>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement<span class="nt">&lt;/sos:observationType&gt;</span>
+            <span class="nt">&lt;sos:observationType&gt;</span>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation<span class="nt">&lt;/sos:observationType&gt;</span>
+            <span class="nt">&lt;sos:featureOfInterestType&gt;</span>http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen<span class="nt">&lt;/sos:featureOfInterestType&gt;</span>
+        <span class="nt">&lt;/sos:SosInsertionMetadata&gt;</span>
+    <span class="nt">&lt;/swes:metadata&gt;</span>
+<span class="nt">&lt;/swes:InsertSensor&gt;</span>
+</pre></div>
+</div>
+<p>InsertObservation example:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;sos:InsertObservation</span> <span class="na">service=</span><span class="s">&quot;SOS&quot;</span> <span class="na">version=</span><span class="s">&quot;2.0.0&quot;</span>
+    <span class="na">xmlns:sos=</span><span class="s">&quot;http://www.opengis.net/sos/2.0&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+    <span class="na">xmlns:swe=</span><span class="s">&quot;http://www.opengis.net/swe/2.0&quot;</span>
+    <span class="na">xmlns:swes=</span><span class="s">&quot;http://www.opengis.net/swes/2.0&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml/3.2&quot;</span>
+    <span class="na">xmlns:ogc=</span><span class="s">&quot;http://www.opengis.net/ogc&quot;</span>
+    <span class="na">xmlns:om=</span><span class="s">&quot;http://www.opengis.net/om/2.0&quot;</span>
+    <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;sos:offering&gt;</span>chemical_analisys<span class="nt">&lt;/sos:offering&gt;</span>
+    <span class="nt">&lt;sos:observation&gt;</span>
+        <span class="nt">&lt;om:OM_Observation</span> <span class="na">id=</span><span class="s">&quot;f1&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;om:type</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:phenomenonTime&gt;</span>
+                <span class="nt">&lt;gml:TimeInstant</span> <span class="na">gml:id=</span><span class="s">&quot;phenomenonTime&quot;</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;gml:timePosition&gt;</span>2017-05-08T16:50:00.000+00:00<span class="nt">&lt;/gml:timePosition&gt;</span>
+                <span class="nt">&lt;/gml:TimeInstant&gt;</span>
+            <span class="nt">&lt;/om:phenomenonTime&gt;</span>
+            <span class="nt">&lt;om:resultTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:procedure</span> <span class="na">xlink:href=</span><span class="s">&quot;chemical_analisys&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:observedProperty</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:water:analysis:ph&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:featureOfInterest</span> <span class="na">xlink:href=</span><span class="s">&quot;sampling-256&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:result</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:MeasureType&quot;</span> <span class="na">uom=</span><span class="s">&quot;pH&quot;</span><span class="nt">&gt;</span>7.9<span class="nt">&lt;/om:result&gt;</span>
+        <span class="nt">&lt;/om:OM_Observation&gt;</span>
+    <span class="nt">&lt;/sos:observation&gt;</span>
+    <span class="nt">&lt;sos:observation&gt;</span>
+        <span class="nt">&lt;om:OM_Observation</span> <span class="na">id=</span><span class="s">&quot;f2&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;om:type</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:phenomenonTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:resultTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:procedure</span> <span class="na">xlink:href=</span><span class="s">&quot;chemical_analisys&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:observedProperty</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:water:analysis:as&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:featureOfInterest</span> <span class="na">xlink:href=</span><span class="s">&quot;sampling-256&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:result</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:MeasureType&quot;</span> <span class="na">uom=</span><span class="s">&quot;µg/l&quot;</span><span class="nt">&gt;</span>1.2<span class="nt">&lt;/om:result&gt;</span>
+        <span class="nt">&lt;/om:OM_Observation&gt;</span>
+    <span class="nt">&lt;/sos:observation&gt;</span>
+    <span class="nt">&lt;sos:observation&gt;</span>
+        <span class="nt">&lt;om:OM_Observation</span> <span class="na">id=</span><span class="s">&quot;f3&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;om:type</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:phenomenonTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:resultTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:procedure</span> <span class="na">xlink:href=</span><span class="s">&quot;chemical_analisys&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:observedProperty</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:water:analysis:conductibility&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:featureOfInterest</span> <span class="na">xlink:href=</span><span class="s">&quot;sampling-256&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:result</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:MeasureType&quot;</span> <span class="na">uom=</span><span class="s">&quot;µS/cm&quot;</span><span class="nt">&gt;</span>376<span class="nt">&lt;/om:result&gt;</span>
+        <span class="nt">&lt;/om:OM_Observation&gt;</span>
+    <span class="nt">&lt;/sos:observation&gt;</span>
+    <span class="nt">&lt;sos:observation&gt;</span>
+        <span class="nt">&lt;om:OM_Observation</span> <span class="na">id=</span><span class="s">&quot;f4&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;om:type</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:phenomenonTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:resultTime</span> <span class="na">xlink:href=</span><span class="s">&quot;#phenomenonTime&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:procedure</span> <span class="na">xlink:href=</span><span class="s">&quot;chemical_analisys&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:observedProperty</span>
+                <span class="na">xlink:href=</span><span class="s">&quot;urn:ogc:def:parameter:x-istsos:1.0:water:analysis:nh4&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:featureOfInterest</span> <span class="na">xlink:href=</span><span class="s">&quot;sampling-256&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;om:result</span> <span class="na">xsi:type=</span><span class="s">&quot;gml:MeasureType&quot;</span> <span class="na">uom=</span><span class="s">&quot;µg/l&quot;</span><span class="nt">&gt;</span>3.29<span class="nt">&lt;/om:result&gt;</span>
+        <span class="nt">&lt;/om:OM_Observation&gt;</span>
+    <span class="nt">&lt;/sos:observation&gt;</span>
+<span class="nt">&lt;/sos:InsertObservation&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="specimen-timeseries-observation">
+<h2>Specimen TimeSeries Observation<a class="headerlink" href="#specimen-timeseries-observation" title="Permalink to this headline">¶</a></h2>
+<p>systemType: <strong>specimenTimeSeriesObservation</strong></p>
+<p>An example of such case would be a sample or specimen taken from the sampled
+feature and re-analysed at regular intervals ex situ in an external laboratory.
+This could apply to the measurement of the biochemical oxygen demand (BOD) in
+waste water treatment plants; it is measured by taking one sample and studying
+BOD evolution over time in a laboratory. While the usual result requested is
+BOD 5 (5 difference of O 2 consumption by micro-organisms after 5 days) or BOD
+21, in some cases you may require the entire time series.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo-banner-index.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">System Types classification</a><ul>
+<li><a class="reference internal" href="#point-timeseries-observation">Point TimeSeries Observation</a></li>
+<li><a class="reference internal" href="#mobile-timeseries-observation">Mobile TimeSeries Observation</a></li>
+<li><a class="reference internal" href="#trajectory-observation">Trajectory Observation</a></li>
+<li><a class="reference internal" href="#profile-observation">Profile Observation</a></li>
+<li><a class="reference internal" href="#specimen-observation">Specimen Observation</a></li>
+<li><a class="reference internal" href="#specimen-timeseries-observation">Specimen TimeSeries Observation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to istSOS3’s documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="insertsensor.html"
+                        title="next chapter">Inserting new sensors</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/systemtypes.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="insertsensor.html" title="Inserting new sensors"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to istSOS3’s documentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright Institute of Eath Science - SUPSI 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

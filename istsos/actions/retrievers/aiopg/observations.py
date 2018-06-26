@@ -551,13 +551,15 @@ temporalFilter:
             unionSelect,
             " UNION ".join(unions)
         )
+        print('Length of Uninons')
+        print(len(unions))
+        # istsos.debug(
+        #     (
+        #         yield from cur.mogrify(sql, tuple(params*len(unions)))
+        #     ).decode("utf-8")
+        # )
 
-        istsos.debug(
-            (
-                yield from cur.mogrify(sql, tuple(params*len(unions)))
-            ).decode("utf-8")
-        )
-
+        # yield from cur.execute(sql, tuple(params*2)
         yield from cur.execute(sql, tuple(params*len(unions)))
         rec = yield from cur.fetchone()
         request['observations'] = rec[0]

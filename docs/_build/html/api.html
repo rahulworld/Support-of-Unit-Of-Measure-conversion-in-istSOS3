@@ -1,0 +1,669 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Extra API &#8212; istSOS 3.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Architecture" href="architecture.html" />
+    <link rel="prev" title="Getting observations" href="getobservation.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="architecture.html" title="Architecture"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="getobservation.html" title="Getting observations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="extra-api">
+<span id="api"></span><h1>Extra API<a class="headerlink" href="#extra-api" title="Permalink to this headline">¶</a></h1>
+<p>All the API call are made via POST requests.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="53%" />
+<col width="26%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Entity</th>
+<th class="head">retrieve</th>
+<th class="head">create</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>uoms</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr class="row-odd"><td>observedProperties</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr class="row-even"><td>offering</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr class="row-odd"><td>offeringlist</td>
+<td>yes</td>
+<td>no</td>
+</tr>
+<tr class="row-even"><td>observation</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr class="row-odd"><td>specimen</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr class="row-even"><td>material</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr class="row-odd"><td>method</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr class="row-even"><td>system type</td>
+<td>yes</td>
+<td>no</td>
+</tr>
+<tr class="row-odd"><td>observation type</td>
+<td>yes</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<p>post example:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;entity_name&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;param1&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;param2&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;entity_name&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;create&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;param1&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;param2&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="uom">
+<h2>Uom<a class="headerlink" href="#uom" title="Permalink to this headline">¶</a></h2>
+<p>API to manage unit of measures</p>
+<p>Get lists of all unit of measures</p>
+<p>JSON body:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;uoms&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Add new unit of measures</p>
+<p>JSON body:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;uoms&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;create&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;mm&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;millimenter&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>json response:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;new uom id: 28&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="observed-property">
+<h2>Observed Property<a class="headerlink" href="#observed-property" title="Permalink to this headline">¶</a></h2>
+<p>API to manage observed properties</p>
+<p>Get list of all observedProeprties:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;observedProperties&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Add new observed property</p>
+<p>Request body:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;observedProperties&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;create&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Air temperature at 2 meters above terrain&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;def&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;air-temperature&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>json response:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;new observed property id: 36&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="offering">
+<h2>Offering<a class="headerlink" href="#offering" title="Permalink to this headline">¶</a></h2>
+<p>Get a list of offering, using offering name OR procedure name</p>
+<p>Params:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Params</th>
+<th class="head">example</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>offering</td>
+<td>977fa436736d11e7807c080027414ee3</td>
+</tr>
+<tr class="row-odd"><td>procedure</td>
+<td><a class="reference external" href="urn:ogc:def:procedure:x-istsos:1.0:LUGANO">urn:ogc:def:procedure:x-istsos:1.0:LUGANO</a></td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;offering&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;offerings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;977fa436736d11e7807c080027414ee3&quot;</span><span class="p">,</span> <span class="s2">&quot;977fa438736d11e7807c080027414ee3&quot;</span><span class="p">,</span> <span class="s2">&quot;341368568ef011e78a9d080027414ee3&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;offering&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;procedures&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;urn:ogc:def:procedure:x-istsos:1.0:LUGANO&quot;</span><span class="p">,</span> <span class="s2">&quot;urn:ogc:def:procedure:x-istsos:1.0:TREVANO&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Create a new offering</p>
+<p>JSON body:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;offering&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;create&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;observable_property&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;air-temperature&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;definition&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;uom&quot;</span><span class="p">:</span> <span class="s2">&quot;°C&quot;</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;observation_type&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="nt">&quot;definition&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;procedure&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:ogc:def:procedure:x-istsos:1.0:PROVA2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;procedure_description_format&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;http://www.opengis.net/sensorML/1.0.1&quot;</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;foi_type&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;systemType&quot;</span><span class="p">:</span> <span class="s2">&quot;undefined&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>json response:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;new procedure id: 341368568ef011e78a9d080027414ee3&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="offering-list">
+<h2>Offering list<a class="headerlink" href="#offering-list" title="Permalink to this headline">¶</a></h2>
+<p>This API retrieve the list of all offering with the most important information</p>
+<p>request body:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;offeringList&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>response example:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;begin_pos&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-05-08T18:50:00+02:00&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;procedure&quot;</span><span class="p">:</span> <span class="s2">&quot;977fa435736d11e7807c080027414ee3&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;{http://www.opengis.net/sensorML/1.0.1}&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end_pos&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-05-08T19:10:00+02:00&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;offering&quot;</span><span class="p">:</span> <span class="s2">&quot;977fa434736d11e7807c080027414ee3&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;observable_properties&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;uom&quot;</span><span class="p">:</span> <span class="s2">&quot;°C&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;air-temperature&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;definition&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;begin_pos&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-05-08T19:20:00+02:00&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;procedure&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:ogc:def:procedure:x-istsos:1.0:BREGANZONA&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;{http://www.opengis.net/sensorML/1.0.1}&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;end_pos&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-05-08T20:30:00+02:00&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;offering&quot;</span><span class="p">:</span> <span class="s2">&quot;977fa436736d11e7807c080027414ee3&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;observable_properties&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;uom&quot;</span><span class="p">:</span> <span class="s2">&quot;°C&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;air-temperature&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;definition&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="observation">
+<h2>Observation<a class="headerlink" href="#observation" title="Permalink to this headline">¶</a></h2>
+<p>get observation params:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Params</th>
+<th class="head">example</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>procedure</td>
+<td><a class="reference external" href="urn:ogc:def:procedure:x-istsos:1.0:BREGANZONA">urn:ogc:def:procedure:x-istsos:1.0:BREGANZONA</a></td>
+</tr>
+<tr class="row-odd"><td>temporalFilter</td>
+<td>2017-01-01T00:00:00+0100/2018-01-01T00:00:00+0100</td>
+</tr>
+<tr class="row-even"><td>observedProperty</td>
+<td><a class="reference external" href="urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature">urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature</a></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;observation&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;params&quot;</span><span class="p">:{</span>
+        <span class="nt">&quot;procedures&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;urn:ogc:def:procedure:x-istsos:1.0:BREGANZONA&quot;</span><span class="p">],</span>
+        <span class="nt">&quot;temporalFilter&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-01-01T00:00:00+0100/2017-05-11T19:59:59+0200&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;observedProperty&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Insert observations:</p>
+<p>json body example</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+     <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;observation&quot;</span><span class="p">,</span>
+     <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;create&quot;</span><span class="p">,</span>
+     <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+         <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="p">{</span>
+             <span class="nt">&quot;2017-05-10T20:20:00+02:00&quot;</span><span class="p">:</span> <span class="p">[</span>
+                 <span class="mf">19.6</span>
+             <span class="p">],</span>
+             <span class="nt">&quot;2017-05-10T20:30:00+02:00&quot;</span><span class="p">:</span> <span class="p">[</span>
+                 <span class="mf">18.9</span>
+             <span class="p">],</span>
+             <span class="nt">&quot;2017-05-10T20:40:00+02:00&quot;</span><span class="p">:</span> <span class="p">[</span>
+                 <span class="mf">18.3</span>
+             <span class="p">]</span>
+         <span class="p">},</span>
+         <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">[</span>
+             <span class="s2">&quot;http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement&quot;</span>
+         <span class="p">],</span>
+         <span class="nt">&quot;phenomenonTime&quot;</span><span class="p">:</span> <span class="p">{</span>
+             <span class="nt">&quot;timePeriod&quot;</span><span class="p">:</span> <span class="p">{</span>
+                 <span class="nt">&quot;begin&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-05-10T20:20:00+0100&quot;</span><span class="p">,</span>
+                 <span class="nt">&quot;end&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-05-10T20:40:00+0100&quot;</span>
+             <span class="p">}</span>
+         <span class="p">},</span>
+         <span class="nt">&quot;procedure&quot;</span><span class="p">:</span> <span class="s2">&quot;urn:ogc:def:procedure:x-istsos:1.0:BREGANZONA&quot;</span><span class="p">,</span>
+         <span class="nt">&quot;offering&quot;</span><span class="p">:</span> <span class="s2">&quot;977fa436736d11e7807c080027414ee3&quot;</span><span class="p">,</span>
+         <span class="nt">&quot;featureOfInterest&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+         <span class="nt">&quot;observedProperty&quot;</span><span class="p">:</span> <span class="p">[</span>
+             <span class="s2">&quot;urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature&quot;</span>
+         <span class="p">],</span>
+         <span class="nt">&quot;quality&quot;</span><span class="p">:</span> <span class="p">{</span>
+             <span class="nt">&quot;2017-05-10T20:20:00+02:00&quot;</span><span class="p">:</span> <span class="p">[</span>
+                 <span class="mi">100</span>
+             <span class="p">],</span>
+             <span class="nt">&quot;2017-05-10T20:30:00+02:00&quot;</span><span class="p">:</span> <span class="p">[</span>
+                 <span class="mi">100</span>
+             <span class="p">],</span>
+             <span class="nt">&quot;2017-05-10T20:40:00+02:00&quot;</span><span class="p">:</span> <span class="p">[</span>
+                 <span class="mi">100</span>
+             <span class="p">]</span>
+         <span class="p">},</span>
+         <span class="nt">&quot;uom&quot;</span><span class="p">:</span> <span class="p">[</span>
+             <span class="s2">&quot;°C&quot;</span>
+         <span class="p">],</span>
+         <span class="nt">&quot;featureOfInterest&quot;</span><span class="p">:</span> <span class="p">{</span>
+             <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+             <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span>
+             <span class="nt">&quot;geom&quot;</span><span class="p">:</span> <span class="p">{</span>
+                 <span class="nt">&quot;geom&quot;</span><span class="p">:</span> <span class="p">{</span>
+                     <span class="nt">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+                     <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;point&quot;</span>
+                 <span class="p">},</span>
+                 <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                 <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;prova&quot;</span>
+             <span class="p">}</span>
+         <span class="p">}</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<p>json response:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;new data added&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="specimen">
+<h2>Specimen<a class="headerlink" href="#specimen" title="Permalink to this headline">¶</a></h2>
+<p>Get specimen</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Params</th>
+<th class="head">example</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>specimen</td>
+<td><a class="reference external" href="http://istsos.org/specimen/LUG_20170809">http://istsos.org/specimen/LUG_20170809</a></td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;specimen&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;params&quot;</span><span class="p">:{</span>
+        <span class="nt">&quot;specimen&quot;</span><span class="p">:</span> <span class="s2">&quot;http://istsos.org/specimen/LUG_20170809&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Add new speciment</p>
+<p>json body:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;specimen&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;create&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:{</span>
+            <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A sample for the Lugano Lake water quality monitoring&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;identifier&quot;</span><span class="p">:</span> <span class="s2">&quot;LUG_20170830&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;LUG_20170808&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;href&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;sampledFeature&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;href&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.istsos.org/demo/feature/LuganoLake&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;materialClass&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;href&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.istsos.org/material/water&quot;</span>
+                <span class="p">},</span>
+            <span class="nt">&quot;samplingTime&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;timeInstant&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;instant&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-06-30T15:27:00+01:00&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;samplingMethod&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;href&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.istsos.org/samplingMethod/still-water-prova1&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;samplingLocation&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;point&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;processingDetails&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;processOperator&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;href&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.supsi.ch/ist?person=MarioBianchi&quot;</span><span class="p">},</span>
+                    <span class="nt">&quot;processingDetails&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;href&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.istsos.org/processes/storage&quot;</span><span class="p">},</span>
+                    <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-07-01T15:27:00+01:00&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;processOperator&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;href&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.supsi.ch/ist?person=LucaRossi&quot;</span><span class="p">},</span>
+                    <span class="nt">&quot;processingDetails&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;href&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.istsos.org/processes/Reaction&quot;</span><span class="p">},</span>
+                    <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-07-06T15:27:00+01:00&quot;</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;size&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="nt">&quot;uom&quot;</span><span class="p">:</span> <span class="s2">&quot;liter&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;currentLocation&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;href&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.ti.ch/umam&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;rel&quot;</span><span class="p">:</span> <span class="s2">&quot;http://www.onu.org/offices&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Ufficio Monitoraggio Ambientale - Canton Ticino&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;specimenType&quot;</span><span class="p">:</span> <span class="kc">null</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>response:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;new specimen link: http://istsos.org/istsos3/specimen/LUG_20170830&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="material">
+<h2>material<a class="headerlink" href="#material" title="Permalink to this headline">¶</a></h2>
+<p>Retrive list of materials:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;material&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Create a new material:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;material&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;create&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:{</span>
+        <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;material test API-1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;material-test-1&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>response:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;http://istsos.org/istsos3/material/material-test-1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="method">
+<h2>method<a class="headerlink" href="#method" title="Permalink to this headline">¶</a></h2>
+<p>retrive list of methods:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;method&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>create a new methods:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;method&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;create&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;new-method-1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;test method API-1&quot;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>response:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;new method: http://istsos.org/istsos3/method/new-method-1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="system-type">
+<h2>system type<a class="headerlink" href="#system-type" title="Permalink to this headline">¶</a></h2>
+<p>retrive list of system types:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;systemType&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="observation-type">
+<h2>observation type<a class="headerlink" href="#observation-type" title="Permalink to this headline">¶</a></h2>
+<p>retrive list of observation types:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;entity&quot;</span><span class="p">:</span> <span class="s2">&quot;observationType&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;retrieve&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo-banner-index.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Extra API</a><ul>
+<li><a class="reference internal" href="#uom">Uom</a></li>
+<li><a class="reference internal" href="#observed-property">Observed Property</a></li>
+<li><a class="reference internal" href="#offering">Offering</a></li>
+<li><a class="reference internal" href="#offering-list">Offering list</a></li>
+<li><a class="reference internal" href="#observation">Observation</a></li>
+<li><a class="reference internal" href="#specimen">Specimen</a></li>
+<li><a class="reference internal" href="#material">material</a></li>
+<li><a class="reference internal" href="#method">method</a></li>
+<li><a class="reference internal" href="#system-type">system type</a></li>
+<li><a class="reference internal" href="#observation-type">observation type</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="getobservation.html"
+                        title="previous chapter">Getting observations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="architecture.html"
+                        title="next chapter">Architecture</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="architecture.html" title="Architecture"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="getobservation.html" title="Getting observations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright Institute of Eath Science - SUPSI 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

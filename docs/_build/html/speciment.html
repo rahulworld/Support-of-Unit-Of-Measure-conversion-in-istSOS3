@@ -1,0 +1,244 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Inserting new speciments &#8212; istSOS 3.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting observations" href="getobservation.html" />
+    <link rel="prev" title="Inserting new observations" href="insertobservation.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="getobservation.html" title="Getting observations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="insertobservation.html" title="Inserting new observations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="inserting-new-speciments">
+<span id="speciment"></span><h1>Inserting new speciments<a class="headerlink" href="#inserting-new-speciments" title="Permalink to this headline">¶</a></h1>
+<p>istSOS 3 supports the insertion of speciment observation.</p>
+<div class="section" id="specimen-observation">
+<h2>Specimen Observation<a class="headerlink" href="#specimen-observation" title="Permalink to this headline">¶</a></h2>
+<p>A Specimen is a physical sample, obtained for observation(s) usually
+carried out ex situ, often in a laboratory [1].</p>
+<p>When the Observation represents a measurement of a property of a Specimen at
+a single point in time the specialised observation ‘SpecimenObservation’
+SHOULD be used [2].</p>
+<p>[1] OGC 07-002r3 - Cap. 7.3</p>
+<p>[2] <a class="reference external" href="http://inspire.ec.europa.eu/id/document/tg/d2.9-o%26m-swe">http://inspire.ec.europa.eu/id/document/tg/d2.9-o%26m-swe</a> - Cap. 6.2.5.1.</p>
+<div class="section" id="considerations">
+<h3>Considerations<a class="headerlink" href="#considerations" title="Permalink to this headline">¶</a></h3>
+<p>When inserting speciment observations, the observation table will contains
+not only the results of the laboratory procedure but also some informations
+contained into the SF_Specimen feature of interest.</p>
+<p>There are different cases on how to register and insert speciment observations.
+For instance you can define a procedure that will contain all the results
+derived from a particular speciment type. Imagine a chemical survey of water
+quality of a lake. In this case the feature of interest is the lake and the
+speciments are the water collected in differrent location of that lake. Every
+speciment observation will have information on the speciment, the position,
+the sampling method, the material class, etc. and the obtained observation(s)
+carried out ex-situ.</p>
+<p>Example of a speciment (to be expanded)</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+<span class="nt">&lt;sp:SF_Specimen</span>
+    <span class="na">gml:id=</span><span class="s">&quot;pr1_s1&quot;</span>
+    <span class="na">xmlns:sf=</span><span class="s">&quot;http://www.opengis.net/sampling/2.0&quot;</span>
+    <span class="na">xmlns:sp=</span><span class="s">&quot;http://www.opengis.net/samplingSpecimen/2.0&quot;</span>
+    <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+    <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span>
+    <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml/3.2&quot;</span>
+    <span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://www.opengis.net/samplingSpecimen/2.0 http://schemas.opengis.net/samplingSpecimen/2.0/specimen.xsd&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;gml:description&gt;</span>Rock sample collected on traverse<span class="nt">&lt;/gml:description&gt;</span>
+    <span class="nt">&lt;gml:name</span>
+        <span class="na">codeSpace=</span><span class="s">&quot;http://my.geology.example.org/samples/2007&quot;</span><span class="nt">&gt;</span>pr1_s1<span class="nt">&lt;/gml:name&gt;</span>
+    <span class="nt">&lt;sf:type</span> <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;sf:sampledFeature</span>
+        <span class="na">xlink:href=</span><span class="s">&quot;http://my.geology.example.org/unit/g345&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;sp:materialClass</span> <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/material/OGC-OM/2.0/rock&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;sp:samplingTime&gt;</span>
+        <span class="nt">&lt;gml:TimeInstant</span>
+            <span class="na">gml:id=</span><span class="s">&quot;pr1_s1_t&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;gml:timePosition&gt;</span>2007-01-24T12:14:50.00+09:00<span class="nt">&lt;/gml:timePosition&gt;</span>
+        <span class="nt">&lt;/gml:TimeInstant&gt;</span>
+    <span class="nt">&lt;/sp:samplingTime&gt;</span>
+    <span class="nt">&lt;sp:samplingLocation&gt;</span>
+        <span class="nt">&lt;gml:Point</span>
+            <span class="na">gml:id=</span><span class="s">&quot;pr1_s1_p&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;gml:pos</span>
+                <span class="na">srsName=</span><span class="s">&quot;http://www.opengis.net/def/crs/EPSG/0/4347&quot;</span><span class="nt">&gt;</span>-30.706 134.196 272.<span class="nt">&lt;/gml:pos&gt;</span>
+        <span class="nt">&lt;/gml:Point&gt;</span>
+    <span class="nt">&lt;/sp:samplingLocation&gt;</span>
+    <span class="nt">&lt;sp:size</span>
+        <span class="na">uom=</span><span class="s">&quot;kg&quot;</span><span class="nt">&gt;</span>2.16<span class="nt">&lt;/sp:size&gt;</span>
+    <span class="nt">&lt;sp:currentLocation</span>
+        <span class="na">xlink:href=</span><span class="s">&quot;http://my.geology.example.org/storage/shelf/s234_8&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/sp:SF_Specimen&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-xml"><div class="highlight"><pre><span></span>  <span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+  <span class="nt">&lt;sp:SF_Specimen</span> <span class="na">xmlns:sf=</span><span class="s">&quot;http://www.opengis.net/sampling/2.0&quot;</span>
+          <span class="na">xmlns:sp=</span><span class="s">&quot;http://www.opengis.net/samplingSpecimen/2.0&quot;</span>
+          <span class="na">xmlns:xsi=</span><span class="s">&quot;http://www.w3.org/2001/XMLSchema‐instance&quot;</span>
+          <span class="na">xmlns:xlink=</span><span class="s">&quot;http://www.w3.org/1999/xlink&quot;</span>
+          <span class="na">xmlns:gml=</span><span class="s">&quot;http://www.opengis.net/gml/3.2&quot;</span>
+          <span class="na">gml:id=</span><span class="s">&quot;pr1_s2&quot;</span>
+          <span class="na">xsi:schemaLocation=</span><span class="s">&quot;http://www.opengis.net/samplingSpecimen/2.0</span>
+<span class="s">          http://schemas.opengis.net/samplingSpecimen/2.0/specimen.xsd&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;gml:description&gt;</span>Rock sample collected on traverse<span class="nt">&lt;/gml:description&gt;</span>
+      <span class="nt">&lt;gml:name</span> <span class="na">codeSpace=</span><span class="s">&quot;http://my.geology.example.org/samples/2007&quot;</span><span class="nt">&gt;</span>pr1_s2<span class="nt">&lt;/gml:name&gt;</span>
+      <span class="nt">&lt;sf:type</span> <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_Specimen&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;sf:sampledFeature</span> <span class="na">xlink:href=</span><span class="s">&quot;http://my.geology.example.org/unit/g345&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;sf:relatedSamplingFeature&gt;</span>
+          <span class="nt">&lt;sf:SamplingFeatureComplex&gt;</span>
+              <span class="nt">&lt;sf:role</span> <span class="na">xlink:href=</span><span class="s">&quot;http://www/example/org/sampling/parentSpecimen&quot;</span><span class="nt">/&gt;</span>
+              <span class="nt">&lt;sf:relatedSamplingFeature</span> <span class="na">xlink:href=</span><span class="s">&quot;http://my.geology.example.org/projects/2007/pr1_s1&quot;</span><span class="nt">/&gt;</span>
+          <span class="nt">&lt;/sf:SamplingFeatureComplex&gt;</span>
+      <span class="nt">&lt;/sf:relatedSamplingFeature&gt;</span>
+      <span class="nt">&lt;sp:materialClass</span> <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/material/OGC-OM/2.0/rock&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;sp:samplingTime&gt;</span>
+          <span class="nt">&lt;gml:TimeInstant</span> <span class="na">gml:id=</span><span class="s">&quot;pr1_s2_t&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;gml:timePosition&gt;</span>2007-01-29T12:19:55.00+09:00<span class="nt">&lt;/gml:timePosition&gt;</span>
+          <span class="nt">&lt;/gml:TimeInstant&gt;</span>
+      <span class="nt">&lt;/sp:samplingTime&gt;</span>
+      <span class="nt">&lt;sp:samplingMethod</span> <span class="na">xlink:href=</span><span class="s">&quot;http://geochemistry.example.org/splits/biased/density/greaterThan/2.9&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;sp:samplingLocation&gt;</span>
+          <span class="nt">&lt;gml:Point</span> <span class="na">gml:id=</span><span class="s">&quot;pr1_s2_p&quot;</span><span class="nt">&gt;</span>
+              <span class="nt">&lt;gml:pos</span> <span class="na">srsName=</span><span class="s">&quot;http://www.opengis.net/def/crs/EPSG/0/4347&quot;</span><span class="nt">&gt;</span>30.706 134.196 272.<span class="nt">&lt;/gml:pos&gt;</span>
+          <span class="nt">&lt;/gml:Point&gt;</span>
+      <span class="nt">&lt;/sp:samplingLocation&gt;</span>
+      <span class="nt">&lt;sp:size</span> <span class="na">uom=</span><span class="s">&quot;kg&quot;</span><span class="nt">&gt;</span>2.16<span class="nt">&lt;/sp:size&gt;</span>
+      <span class="nt">&lt;sp:currentLocation</span> <span class="na">xlink:href=</span><span class="s">&quot;http://www.opengis.net/def/nil/OGC-OM/2.0/destroyed&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/sp:SF_Specimen&gt;</span>
+
+--------------------------
+json_schema
+--------------------------
+15-100r1_OGC_Observations_and_Measurements_-_JSON_implementation.pdf
+
+--------------------------
+Inserting new observations
+--------------------------
+
+When inserting new observations related to specimens, istSOS promote a
+two-step procedure which follow the field work work-flow:
+
+1. In the field the sample is collected and its metadata are registered
+2. The operator insert the specimen information into the database
+   (using the WAlib)
+3. The specimen is sent to laboratory for specific analyses
+4. when results of analyses are available the operator insert the values of
+   desired observedProperties to the database (using the istsoslib)
+
+
+Alternatively, the operator can store all the information locally and insert
+into the database all at once both the specimen metadata and the analyses results.
+Beware that this approach may prevent the registration of other
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo-banner-index.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Inserting new speciments</a><ul>
+<li><a class="reference internal" href="#specimen-observation">Specimen Observation</a><ul>
+<li><a class="reference internal" href="#considerations">Considerations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="insertobservation.html"
+                        title="previous chapter">Inserting new observations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="getobservation.html"
+                        title="next chapter">Getting observations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/speciment.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="getobservation.html" title="Getting observations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="insertobservation.html" title="Inserting new observations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">istSOS 3.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright Institute of Eath Science - SUPSI 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

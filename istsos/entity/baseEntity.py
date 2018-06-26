@@ -56,6 +56,10 @@ class BaseEntity(dict):
         super().__setitem__(key, val)
 
     def is_valid(self, json_source):
+        print('Validataion Place')
+        print(json_source)
+        print('json_schema')
+        print(self.json_schema)
         validate(json_source, self.json_schema)
 
     def register(self, observer):
