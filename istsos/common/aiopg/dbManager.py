@@ -62,6 +62,7 @@ class DbManager():
             raise Exception("begin must be called first")
         if self._commit is False:
             istsos.debug("Committing transaction")
+            print(self.cur)
             yield from self.cur.execute("COMMIT;")
             self._commit = True
 
