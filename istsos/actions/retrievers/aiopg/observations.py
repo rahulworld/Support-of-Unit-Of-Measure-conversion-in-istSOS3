@@ -241,10 +241,16 @@ temporalFilter:
 
     @asyncio.coroutine
     def __get_array(self, offerings, request):
-
+        # print("To PRINT REQUEST AT OBSERVATION")
+        # print(request[0]['offerings']['observable_properties'])
+        To_unit=request['json']['in_unit']
+        # print("################################3")
+        ConvertUnit=''
         dbmanager = yield from self.init_connection()
         cur = dbmanager.cur
         op_filter = request.get_filter('observedProperties')
+        print('Print Unit of observations line 250')
+        print(op_filter)
         tables = {}
         columns = []
         headers = [{
@@ -269,6 +275,7 @@ temporalFilter:
                         columns.append(op['column'])
                         # columns_qi.append('%s_qi' % op['column'])
                         tables[tName].append(op['column'])
+                        ConvertUnit=op['uom']
                         headers.append({
                             "type": "number",
                             "name": op['name'],
@@ -290,6 +297,7 @@ temporalFilter:
                     columns.append(op['column'])
                     # columns_qi.append('%s_qi' % op['column'])
                     tables[tName].append(op['column'])
+                    ConvertUnit=op['uom']
                     headers.append({
                         "type": "number",
                         "name": op['name'],
@@ -297,7 +305,8 @@ temporalFilter:
                         "offering": offering['name'],
                         "uom": op['uom']
                     })
-
+        print('IT Is Unit IN OFFERING')
+        print(ConvertUnit)
         unions = []
         unionSelect = []
         jsonKeys = []
@@ -341,16 +350,32 @@ temporalFilter:
                         "(%s)" % (' OR '.join(temporal))
                     )
 
+        print('Print Unit of Measurement')
+        print(headers)
+
+
         for table in tables.keys():
             off_cols = tables[table]
             cols = unionColumns.copy()
+            print('Print col in observations')
+            print(cols)
+            print(off_cols)
             for col in off_cols:
                 cols[
                     columns.index(col)
                 ] = unionColumns[columns.index(col)].replace(
                     "NULL::double precision",
-                    col
+                    col+"*'m'::unit@'cm'"
                 )
+                # cols[
+                #     columns.index(col)
+                # ] = unionColumns[columns.index(col)].replace(
+                #     "NULL::double precision",
+                #     col
+                # )
+            print('Print col in observations 1')
+            print(cols)
+            print(off_cols)
             uSql = """
                 SELECT
                     end_time, %s
@@ -359,6 +384,14 @@ temporalFilter:
             """ % (
                 ", ".join(cols), table
             )
+            # uSql = """
+            #     SELECT
+            #         end_time, %s '*' %s ::unit@ %s
+            #     FROM
+            #         data.%s
+            # """ % (
+            #     ", ".join(cols), ConvertUnit, To_unit, table
+            # )
             if len(where) > 0:
                 uSql += "WHERE %s" % (
                     'AND'.join(where)
@@ -395,23 +428,42 @@ temporalFilter:
             " UNION ".join(unions)
         )
 
-        # istsos.debug(
+        # sql = """
+        #     SET enable_seqscan=false;
+        #     SET SESSION TIME ZONE '+00:00';
+        #     %s
         #     (
-        #         yield from cur.mogrify(sql, tuple(params*len(unions)))
-        #     ).decode("utf-8")
-        # )        
+        #         SELECT end_time, %s*%s::unit@%s 
+        #         FROM (
+        #             %s
+        #         ) a
+        #         GROUP BY end_time
+        #         ORDER BY end_time
+        #     ) b
+        # """ % (
+        #     jsonSql,
+        #     unionSelect,
+        #     ConvertUnit,
+        #     To_unit,
+        #     " UNION ".join(unions)
+        # )
+
         istsos.debug(
             (
-                yield from cur.mogrify(sql, tuple(params*2))
+                yield from cur.mogrify(sql, tuple(params*len(unions)))
             ).decode("utf-8")
-        )
+        )        
+        # istsos.debug(
+        #     (
+        #         yield from cur.mogrify(sql, tuple(params*2))
+        #     ).decode("utf-8")
+        # )
 
-        # yield from cur.execute(sql, tuple(params*len(unions)))
         print("Observation.py")
         print(sql)
-        yield from cur.execute(sql, tuple(params*0))
+        yield from cur.execute(sql, tuple(params*len(unions)))
+        # yield from cur.execute(sql, tuple(params*0))
         rec = yield from cur.fetchone()
-        print(recs)
         request['observations'] = rec[0]
         request['headers'] = headers
         # recs = yield from cur.fetchall()
@@ -562,15 +614,16 @@ temporalFilter:
         )
         print('Length of Uninons')
         print(len(unions))
-        # istsos.debug(
-        #     (
-        #         yield from cur.mogrify(sql, tuple(params*len(unions)))
-        #     ).decode("utf-8")
-        # )
+        print(unions)
+        istsos.debug(
+            (
+                yield from cur.mogrify(sql, tuple(params*len(unions)))
+            ).decode("utf-8")
+        )
         print('observation.py')
         print(sql)
-        yield from cur.execute(sql, tuple(params*2)
-        # yield from cur.execute(sql, tuple(params*len(unions)))
+        # yield from cur.execute(sql, tuple(params*2)
+        yield from cur.execute(sql, tuple(params*len(unions)))
         rec = yield from cur.fetchone()
         print(rec)
         print('This is successful')
