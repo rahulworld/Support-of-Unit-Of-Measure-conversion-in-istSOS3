@@ -320,6 +320,15 @@ temporalFilter:
             )
             jsonKeys.append("COALESCE(c%s, 'null')" % (idx))
 
+        # for idx in range(0, len(columns)):
+        #     unionSelect.append(
+        #         "SUM(c%s)::text as c%s" % (idx, idx)
+        #     )
+        #     unionColumns.append(
+        #         "NULL::double precision as c%s" % (idx)
+        #     )
+        #     jsonKeys.append("COALESCE(c%s, 'null')" % (idx))
+
         unionSelect = ", ".join(unionSelect)
 
         temporal = []
@@ -361,18 +370,26 @@ temporalFilter:
             print(cols)
             print(off_cols)
             for col in off_cols:
-                cols[
-                    columns.index(col)
-                ] = unionColumns[columns.index(col)].replace(
-                    "NULL::double precision",
-                    col+"*'m'::unit@'cm'"
-                )
+                # ConvertScript="""np.ting as c0 from(select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting from(select %s *'m'::unit@ 'mm' as num)as tmp)as np"""% (", ",col)
+                # print('Printing ConvertScript')
+                # print(ConvertScript)
+                # cols[
+                #     columns.index(col)
+                # ] = unionColumns[columns.index(col)].replace(
+                #     "NULL::double precision", ConvertScript
+                # )
                 # cols[
                 #     columns.index(col)
                 # ] = unionColumns[columns.index(col)].replace(
                 #     "NULL::double precision",
-                #     col
+                #     col+"*'m'::unit@'cm'"
                 # )
+                cols[
+                    columns.index(col)
+                ] = unionColumns[columns.index(col)].replace(
+                    "NULL::double precision",
+                    col
+                )
             print('Print col in observations 1')
             print(cols)
             print(off_cols)
@@ -384,6 +401,8 @@ temporalFilter:
             """ % (
                 ", ".join(cols), table
             )
+            print('Query Printing uSql')
+            print(uSql)
             # uSql = """
             #     SELECT
             #         end_time, %s '*' %s ::unit@ %s
@@ -397,6 +416,8 @@ temporalFilter:
                     'AND'.join(where)
                 )
             unions.append("(%s)" % uSql)
+            print('Query Printing uSql')
+            print(uSql)
 
         jsonSql = """
             SELECT array_agg(
@@ -409,6 +430,30 @@ temporalFilter:
         """ % (
             ", ".join(jsonKeys),
         )
+        print('Query Printing jsonSql')
+        print(jsonSql)
+        print('Query Printing unionSelect')
+        print(unionSelect)
+        print('union')
+        print(unions)
+
+        # sql = """
+        #     SET enable_seqscan=false;
+        #     SET SESSION TIME ZONE '+00:00';
+        #     %s
+        #     (
+        #         SELECT end_time, %s
+        #         FROM (
+        #             %s
+        #         ) a
+        #         GROUP BY end_time
+        #         ORDER BY end_time
+        #     ) b
+        # """ % (
+        #     jsonSql,
+        #     unionSelect,
+        #     " UNION ".join(unions)
+        # )
 
         sql = """
             SET enable_seqscan=false;
