@@ -407,15 +407,15 @@ temporalFilter:
                 #     "NULL::double precision", ConvertScript
                 # )
                 ####################################3
-                convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
-                print('Print convert query for postgresql-unit')
-                print(convert_unit)
-                cols[
-                    columns.index(col)
-                ] = unionColumns[columns.index(col)].replace(
-                    "NULL::double precision",
-                    convert_unit
-                )
+                # convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                # print('Print convert query for postgresql-unit')
+                # print(convert_unit)
+                # cols[
+                #     columns.index(col)
+                # ] = unionColumns[columns.index(col)].replace(
+                #     "NULL::double precision",
+                #     convert_unit
+                # )
                 #############################
                 # cols[
                 #     columns.index(col)
@@ -423,12 +423,12 @@ temporalFilter:
                 #     "NULL::double precision",
                 #     col+"*'m'::unit@@'mm' "
                 # )
-                # cols[
-                #     columns.index(col)
-                # ] = unionColumns[columns.index(col)].replace(
-                #     "NULL::double precision",
-                #     col
-                # )
+                cols[
+                    columns.index(col)
+                ] = unionColumns[columns.index(col)].replace(
+                    "NULL::double precision",
+                    col
+                )
             print('Print col in observations 1')
             print(cols)
             print(off_cols)
