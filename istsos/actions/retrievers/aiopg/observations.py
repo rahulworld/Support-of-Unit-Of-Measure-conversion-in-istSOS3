@@ -311,15 +311,14 @@ temporalFilter:
         unionSelect = []
         jsonKeys = []
         unionColumns = []
-        for idx in range(0, len(columns)):
-            unionSelect.append(
-                "SUM(c%s)::text as c%s" % (idx, idx)
-            )
-            unionColumns.append(
-                "NULL::double precision as c%s" % (idx)
-            )
-            jsonKeys.append("COALESCE(c%s, 'null')" % (idx))
-
+        # for idx in range(0, len(columns)):
+        #     unionSelect.append(
+        #         "SUM(c%s)::text as c%s" % (idx, idx)
+        #     )
+        #     unionColumns.append(
+        #         "NULL::double precision"
+        #     )
+        #     jsonKeys.append("COALESCE(c%s, 'null')" % (idx))
         # for idx in range(0, len(columns)):
         #     unionSelect.append(
         #         "SUM(c%s)::text as c%s" % (idx, idx)
@@ -328,6 +327,15 @@ temporalFilter:
         #         "NULL::double precision as c%s" % (idx)
         #     )
         #     jsonKeys.append("COALESCE(c%s, 'null')" % (idx))
+
+        for idx in range(0, len(columns)):
+            unionSelect.append(
+                "SUM(c%s)::text as c%s" % (idx, idx)
+            )
+            unionColumns.append(
+                "NULL::double precision as c%s" % (idx)
+            )
+            jsonKeys.append("COALESCE(c%s, 'null')" % (idx))
 
         unionSelect = ", ".join(unionSelect)
 
@@ -370,29 +378,59 @@ temporalFilter:
             print(cols)
             print(off_cols)
             for col in off_cols:
-                # ConvertScript="""np.ting as c0 from(select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting from(select %s *'m'::unit@ 'mm' as num)as tmp)as np"""% (", ",col)
+                # ConvertScript="""np.ting from(select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting from(select %s *'m'::unit@ 'mm' as num)as tmp)as np"""% (", ",col)
+                # ConvertScript="""
+                # c0.ting as c0 
+                # from
+                # (
+                # select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting 
+                # from
+                # (
+                # select """+col+ """*'m'::unit@ 'mm' as num from data._belin
+                # )as tmp)"""
+                ##################################
+                # ConvertScript="""np.ting as c0 
+                #     from
+                #     (
+                #     select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting 
+                #     from
+                #     (
+                #     select """+col+ """*'m'::unit@ 'mm' as num
+                #     )as tmp) as np"""
+                # # ConvertScript="np.ting from(select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting from(select" +col+ "*'m'::unit@ 'mm' as num)as tmp)as np"
                 # print('Printing ConvertScript')
                 # print(ConvertScript)
+                ###################################
                 # cols[
                 #     columns.index(col)
                 # ] = unionColumns[columns.index(col)].replace(
                 #     "NULL::double precision", ConvertScript
                 # )
-                # cols[
-                #     columns.index(col)
-                # ] = unionColumns[columns.index(col)].replace(
-                #     "NULL::double precision",
-                #     col+"*'m'::unit@'cm'"
-                # )
+                ####################################3
                 cols[
                     columns.index(col)
                 ] = unionColumns[columns.index(col)].replace(
                     "NULL::double precision",
-                    col
+                    col+"*'m'::unit@@'mm' "
                 )
+                # cols[
+                #     columns.index(col)
+                # ] = unionColumns[columns.index(col)].replace(
+                #     "NULL::double precision",
+                #     col
+                # )
             print('Print col in observations 1')
             print(cols)
             print(off_cols)
+            # uSql = """
+            #     SELECT
+            #         end_time, %s
+            #     FROM
+            #         data.%s
+            # """ % (
+            #     ", ".join(cols), table
+            # )
+
             uSql = """
                 SELECT
                     end_time, %s
@@ -401,6 +439,7 @@ temporalFilter:
             """ % (
                 ", ".join(cols), table
             )
+
             print('Query Printing uSql')
             print(uSql)
             # uSql = """
