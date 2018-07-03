@@ -227,7 +227,19 @@ like this:
         return self.instance.requests
 
 
-PLUGIN_API = {}
+PLUGIN_API = {
+
+    #UNIT CONVERSION using Postgresql-unit
+    "UNIT_CONVERSION": (
+        'units.unitConversion',
+        'UnitConversion'
+    ),
+    #UNIT CONVERSION using pint
+    "UNIT_CONVERSION_PINT": (
+        'units.unit_conversion_pint',
+        'UnitConversionPint'
+    )
+}
 
 REST_API = {
 

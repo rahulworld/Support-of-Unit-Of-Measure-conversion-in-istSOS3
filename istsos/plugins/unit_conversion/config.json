@@ -1,0 +1,15 @@
+{
+    "name": "unit_conversion",
+    "version": "1.0.0",
+    "author": "rahulworld",
+    "author_email": "rahulnitsxr@gmail.com",
+    "description": "This is an istSOS3 plugin",
+    "license": "GPL3",
+    "url": "http://example.com/unit_conversion/",
+    "img": "http://example.com/unit_conversion/logo.png",
+    "api": {
+        "UNIT_CON_POST": [
+            "unit_conversion.action", "UNIT_CON_POSTApi"
+        ]
+    }
+}
