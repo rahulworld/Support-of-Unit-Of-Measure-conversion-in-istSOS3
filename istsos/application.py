@@ -228,17 +228,6 @@ like this:
 
 
 PLUGIN_API = {
-
-    #UNIT CONVERSION using Postgresql-unit
-    "UNIT_CONVERSION": (
-        'units.unitConversion',
-        'UnitConversion'
-    ),
-    #UNIT CONVERSION using pint
-    "UNIT_CONVERSION_PINT": (
-        'units.unit_conversion_pint',
-        'UnitConversionPint'
-    )
 }
 
 REST_API = {
