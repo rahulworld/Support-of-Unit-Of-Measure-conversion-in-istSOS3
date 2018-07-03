@@ -243,7 +243,7 @@ temporalFilter:
     def __get_array(self, offerings, request):
         # print("To PRINT REQUEST AT OBSERVATION")
         # print(request[0]['offerings']['observable_properties'])
-        To_unit=request['json']['in_unit']
+        # To_unit=request['json']['in_unit']
         # print("################################3")
         ConvertUnit=''
         dbmanager = yield from self.init_connection()
@@ -370,7 +370,6 @@ temporalFilter:
         print('Print Unit of Measurement')
         print(headers)
 
-
         for table in tables.keys():
             off_cols = tables[table]
             cols = unionColumns.copy()
@@ -423,12 +422,25 @@ temporalFilter:
                 #     "NULL::double precision",
                 #     col+"*'m'::unit@@'mm' "
                 # )
-                cols[
-                    columns.index(col)
-                ] = unionColumns[columns.index(col)].replace(
-                    "NULL::double precision",
-                    col
-                )
+                if 'in_unit' in request['json']:                
+                    To_unit=request['json']['in_unit']
+                    convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                    print('Print convert query for postgresql-unit')
+                    print(convert_unit)
+                    cols[
+                        columns.index(col)
+                    ] = unionColumns[columns.index(col)].replace(
+                        "NULL::double precision",
+                        convert_unit
+                    )
+                else:
+                    cols[
+                        columns.index(col)
+                    ] = unionColumns[columns.index(col)].replace(
+                        "NULL::double precision",
+                        col
+                    )
+
             print('Print col in observations 1')
             print(cols)
             print(off_cols)
