@@ -10,12 +10,23 @@ class UNIT_CON_POSTApi(CompositeAction):
         json = request.get_json()
         # if 'message' in json:
         #     request['message'] = json['message']
-        yield from self.add_plugin("unit_conversion", "UnitConversion")
+                # Add filters
+        request.set_filter(request.get_rest_data())
+        # Adding action Offering retriever
+        yield from self.add_retriever('Offerings')
+        yield from self.add_retriever('Observations')
+        # yield from self.add_plugin("unit_conversion", "Observations")
 
     @asyncio.coroutine
     def after(self, request):
         request['response'] = Response(
-            # json_source=Response.get_template({
-            #     "message": request["message"]
-            # })
+            json_source=Response.get_template({
+                "data": request['observations'],
+                "headers": request['headers']
+            })
         )
+        # request['response'] = Response(
+        #     # json_source=Response.get_template({
+        #     #     "message": request["message"]
+        #     # })
+        # )
