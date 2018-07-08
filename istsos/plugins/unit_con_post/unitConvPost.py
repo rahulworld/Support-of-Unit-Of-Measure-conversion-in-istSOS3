@@ -28,7 +28,7 @@ class UnitConvPost(CompositeAction):
             "in_unit":"°F"
         }
         """
-        yield from self.add_plugin("unit_con_post", "Postgresql_unit")
+        yield from self.add_plugin("unit_con_post", "UnitConversionPo_sql_unit")
 
     @asyncio.coroutine
     def after(self, request):
