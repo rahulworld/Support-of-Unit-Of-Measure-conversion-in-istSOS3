@@ -1,14 +1,9 @@
-# -*- coding: utf-8 -*-
-# istSOS. See https://istsos.org/
-# License: https://github.com/istSOS/istsos3/master/LICENSE.md
-# Version: v3.0.0
-
 import asyncio
 from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
 
 
-class Observations(CompositeAction):
+class UnitConvPost(CompositeAction):
 
     @asyncio.coroutine
     def before(self, request):
@@ -16,28 +11,24 @@ class Observations(CompositeAction):
         Request example: {
             "action": "UNIT_CON_POST",
             "data": {
-                "offerings": ["T_TRE"],
+                "offerings": ["belin","belin"],
                 "observedProperties": [
-                    "urn:ogc:def:parameter:x-istsos:1.0:meteo:air:temperature"
+                    "urn:ogc:def:parameter:x-istsos:1.0:temperature"
                 ],
                 "temporal": {
                     "reference": "om:phenomenonTime",
                     "fes": "during",
                     "period": [
-                        "2006-01-01T00:00:00Z",
-                        "2006-02-01T00:00:00Z"
+                        "2015-05-03T16:30:00.000000+0200",
+                        "2015-06-03T16:30:00.000000+0200"
                     ]
                 },
-                "responseFormat": "application/json;subtype='vega'",
-                "alias": ["a"]
-            }
+                "responseFormat": "application/json;subtype='array'"
+            },
+            "in_unit":"°F"
         }
         """
-        # Add filters
-        request.set_filter(request.get_rest_data())
-        # Adding action Offering retriever
-        yield from self.add_retriever('Offerings')
-        yield from self.add_retriever('Observations')
+        yield from self.add_plugin("unit_con_post", "Postgresql_unit")
 
     @asyncio.coroutine
     def after(self, request):

@@ -136,8 +136,8 @@ class Action(object):
 
     @asyncio.coroutine
     def execute(self, request):
-        print("Action Execute")
-        print(request)
+        # print("Action Execute")
+        # print(request)
         istsos.debug("Executing: %s" % self.__class__.__name__)
         start = time.time()
         try:
@@ -231,6 +231,33 @@ class CompositeAction(Action):
 
 @asyncio.coroutine
 def __get_proxy(istsos_package, action_module, **kwargs):
+    from istsos import setting
+    import importlib
+    state = yield from setting.get_state()
+    fileName = action_module[0].lower() + action_module[1:]
+    module = 'istsos.%s.%s.%s' % (
+        istsos_package,
+        state.config["loader"]["type"],
+        fileName
+    )
+
+    istsos.debug("Importing %s.%s" % (module, action_module))
+    try:
+        m = importlib.import_module(module)
+    except Exception:
+        module = 'istsos.%s.%s' % (
+            istsos_package,
+            fileName
+        )
+        m = importlib.import_module(module)
+
+    m = getattr(m, action_module)
+    if kwargs is not None:
+        return m(**kwargs)
+    return m()
+
+@asyncio.coroutine
+def __get_plugin_proxy(istsos_package, action_module, **kwargs):
     from istsos import setting
     import importlib
     state = yield from setting.get_state()

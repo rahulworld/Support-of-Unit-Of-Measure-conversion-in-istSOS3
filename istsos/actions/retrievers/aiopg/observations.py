@@ -249,8 +249,8 @@ temporalFilter:
         dbmanager = yield from self.init_connection()
         cur = dbmanager.cur
         op_filter = request.get_filter('observedProperties')
-        print('Print Unit of observations line 250')
-        print(op_filter)
+        # print('Print Unit of observations line 250')
+        # print(op_filter)
         tables = {}
         columns = []
         headers = [{
@@ -305,8 +305,8 @@ temporalFilter:
                         "offering": offering['name'],
                         "uom": op['uom']
                     })
-        print('IT Is Unit IN OFFERING')
-        print(ConvertUnit)
+        # print('IT Is Unit IN OFFERING')
+        # print(ConvertUnit)
         unions = []
         unionSelect = []
         jsonKeys = []
@@ -367,15 +367,15 @@ temporalFilter:
                         "(%s)" % (' OR '.join(temporal))
                     )
 
-        print('Print Unit of Measurement')
-        print(headers)
+        # print('Print Unit of Measurement')
+        # print(headers)
 
         for table in tables.keys():
             off_cols = tables[table]
             cols = unionColumns.copy()
-            print('Print col in observations')
-            print(cols)
-            print(off_cols)
+            # print('Print col in observations')
+            # print(cols)
+            # print(off_cols)
             for col in off_cols:
                 # ConvertScript="""np.ting from(select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting from(select %s *'m'::unit@ 'mm' as num)as tmp)as np"""% (", ",col)
                 # ConvertScript="""
@@ -425,8 +425,8 @@ temporalFilter:
                 if 'in_unit' in request['json']:                
                     To_unit=request['json']['in_unit']
                     convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
-                    print('Print convert query for postgresql-unit')
-                    print(convert_unit)
+                    # print('Print convert query for postgresql-unit')
+                    # print(convert_unit)
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
@@ -441,9 +441,9 @@ temporalFilter:
                         col
                     )
 
-            print('Print col in observations 1')
-            print(cols)
-            print(off_cols)
+            # print('Print col in observations 1')
+            # print(cols)
+            # print(off_cols)
             # uSql = """
             #     SELECT
             #         end_time, %s
@@ -462,8 +462,8 @@ temporalFilter:
                 ", ".join(cols), table
             )
 
-            print('Query Printing uSql')
-            print(uSql)
+            # print('Query Printing uSql')
+            # print(uSql)
             # uSql = """
             #     SELECT
             #         end_time, %s '*' %s ::unit@ %s
@@ -477,8 +477,8 @@ temporalFilter:
                     'AND'.join(where)
                 )
             unions.append("(%s)" % uSql)
-            print('Query Printing uSql')
-            print(uSql)
+            # print('Query Printing uSql')
+            # print(uSql)
 
         jsonSql = """
             SELECT array_agg(
@@ -491,12 +491,12 @@ temporalFilter:
         """ % (
             ", ".join(jsonKeys),
         )
-        print('Query Printing jsonSql')
-        print(jsonSql)
-        print('Query Printing unionSelect')
-        print(unionSelect)
-        print('union')
-        print(unions)
+        # print('Query Printing jsonSql')
+        # print(jsonSql)
+        # print('Query Printing unionSelect')
+        # print(unionSelect)
+        # print('union')
+        # print(unions)
 
         # sql = """
         #     SET enable_seqscan=false;
@@ -565,8 +565,8 @@ temporalFilter:
         #     ).decode("utf-8")
         # )
 
-        print("Observation.py")
-        print(sql)
+        # print("Observation.py")
+        # print(sql)
         yield from cur.execute(sql, tuple(params*len(unions)))
         # yield from cur.execute(sql, tuple(params*0))
         rec = yield from cur.fetchone()
@@ -718,21 +718,21 @@ temporalFilter:
             unionSelect,
             " UNION ".join(unions)
         )
-        print('Length of Uninons')
-        print(len(unions))
-        print(unions)
+        # print('Length of Uninons')
+        # print(len(unions))
+        # print(unions)
         istsos.debug(
             (
                 yield from cur.mogrify(sql, tuple(params*len(unions)))
             ).decode("utf-8")
         )
-        print('observation.py')
-        print(sql)
+        # print('observation.py')
+        # print(sql)
         # yield from cur.execute(sql, tuple(params*2)
         yield from cur.execute(sql, tuple(params*len(unions)))
         rec = yield from cur.fetchone()
-        print(rec)
-        print('This is successful')
+        # print(rec)
+        # print('This is successful')
         request['observations'] = rec[0]
         # recs = yield from cur.fetchall()
         istsos.debug("Data is fetched!")

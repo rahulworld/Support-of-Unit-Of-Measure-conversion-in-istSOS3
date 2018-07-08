@@ -5,11 +5,11 @@
     "author_email": "rahulnitsxr@gmail.com",
     "description": "This is an istSOS3 plugin",
     "license": "GPL3",
-    "url": "http://example.com/unit_conversion/",
-    "img": "http://example.com/unit_conversion/logo.png",
+    "url": "http://unit_con_post.com/unit_con_post/",
+    "img": "http://unit_con_post.com/unit_con_post/logo.png",
     "api": {
-        "UNIT_CON_POST": [
-            "unit_conversion.action", "UNIT_CON_POSTApi"
+        "UNIT_CON_PINT": [
+            "unit_con_post.unitConvPost", "UnitConvPost"
         ]
     }
 }
