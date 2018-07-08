@@ -45,12 +45,7 @@ class UnitConversionPo_sql_unit(CompositeAction):
 
     @asyncio.coroutine
     def after(self, request):
-        request['response'] = Response(
-            json_source=Response.get_template({
-                "data": request['observations'],
-                "headers": request['headers']
-            })
-        )
+        pass
 
     @asyncio.coroutine
     def add_retriever_unit_conversion(self, action, filter=None):

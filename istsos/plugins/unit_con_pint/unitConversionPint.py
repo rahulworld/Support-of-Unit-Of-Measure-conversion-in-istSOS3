@@ -49,37 +49,7 @@ class UnitConversionPint(CompositeAction):
 
     @asyncio.coroutine
     def after(self, request):
-        # from_unit=request['json']['from']
-        # to_unit=request['json']['to']
-        # print(request['observations'])
-        recs=request['observations'].copy()
-        for rec in recs:
-            print('REC Value')
-            print(rec[1])
-            # change=rec[2]*ureg.kilometers
-            # change1=change.to(ureg.meter)
-            # change2=change1.magnitude
-            # change=rec[1]+"*"+from_unit+"to"+to_unit
-            change=str(rec[1])+"*mtocm"
-            src, dst = change.split('to')
-            change1=Q_(src).to(dst)
-            change2=change1.magnitude
-            # print(change1)
-            ConvertUnit=[]
-            ConvertUnit.append({
-                "timestamp": str(rec[0]),
-                "rainfall": change2
-            })
-            # request['observations1'].append({
-            #     "timestamp": str(rec[0]),
-            #     "rainfall": change2
-            # })
-        request['response'] = Response(
-            json_source=Response.get_template({
-                "data": ConvertUnit,
-                "headers": request['headers']
-            })
-        )
+        pass
 
     @asyncio.coroutine
     def add_retriever_unit_conversion(self, action, filter=None):
