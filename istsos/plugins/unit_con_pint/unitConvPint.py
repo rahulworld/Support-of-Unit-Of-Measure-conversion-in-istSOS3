@@ -37,30 +37,35 @@ class UnitConvPint(CompositeAction):
 
     @asyncio.coroutine
     def after(self, request):
-        from_unit=request['headers'][1]['uom']
+        from_unit=request['json']['data']['from_unit']
+        to_unit=request['json']['data']['to_unit']
+        # time=request['json']['headers'][0]['column']
+        # value=request['json']['headers'][1]['name']
+        # from_unit=request['headers'][1]['uom']
         # to_unit=request['json']['to']
         # print(request['observations'])
         recs=request['observations'].copy()
-        print('REC Value')
         ConvertUnit=[]
         for rec in recs:
-            # change=rec[2]*ureg.kilometers
+            # change=rec[1]*ureg.kilometers
             # change1=change.to(ureg.meter)
             # change2=change1.magnitude
-            # change=str(rec[1])+"*"+from_unit+"to"+"°F"
+            change=str(rec[1])+"*"+from_unit+"to"+to_unit
             # change=str(rec[1])+"*degC"+"to"+"degF"
             # change=str(rec[1])+"*ureg.degC"+"to"+"ureg.degF"
-            change=rec[1]*ureg.degC
-            # change=str(rec[1])+"* m to cm"
-            # src, dst = change.split('to')
-            # change1=Q_(src).to(dst)
-            change1=change1.to('degF')
+            # change=rec[1]*ureg.degC
+            # change=str(rec[1])+"* kelvin to degF"
+            src, dst = change.split('to')
+            change1=Q_(src).to(dst)
+            # home = Q_(rec[1], ureg.degC)
+            # change1=home.to('degF')
+            # change1=Q_(rec[1], ureg.degC).to(ureg.kelvin).magnitude
             change2=change1.magnitude
             # print(change2)
             # print(change1)
             ConvertUnit.append({
-                "": rec[0],
-                "": change2
+                "datetime" : rec[0],
+                "value": change2
             })
             # request['observations1'].append({
             #     "timestamp": str(rec[0]),
