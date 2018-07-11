@@ -76,6 +76,7 @@ temporalFilter:
         op_filter = request.get_filter('observedProperties')
         tables = {}
         columns = []
+        ConvertUnit=''
         headers = [{
             "type": "datetime",
             "name": "Phenomenon Time",
@@ -98,6 +99,7 @@ temporalFilter:
                         columns.append(op['column'])
                         # columns_qi.append('%s_qi' % op['column'])
                         tables[tName].append(op['column'])
+                        ConvertUnit=op['uom']
                         headers.append({
                             "type": "number",
                             "name": op['name'],
@@ -120,6 +122,7 @@ temporalFilter:
                     columns.append(op['column'])
                     # columns_qi.append('%s_qi' % op['column'])
                     tables[tName].append(op['column'])
+                    ConvertUnit=op['uom']
                     headers.append({
                         "type": "number",
                         "name": op['name'],
@@ -179,12 +182,23 @@ temporalFilter:
             off_cols = tables[table]
             cols = unionColumns.copy()
             for col in off_cols:
-                cols[
-                    columns.index(col)
-                ] = unionColumns[columns.index(col)].replace(
-                    "NULL::double precision",
-                    col
-                )
+                if 'in_unit' in request['json']:                
+                    To_unit=request['json']['in_unit']
+                    convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                    cols[
+                        columns.index(col)
+                    ] = unionColumns[columns.index(col)].replace(
+                        "NULL::double precision",
+                        convert_unit
+                    )
+                else:
+                    cols[
+                        columns.index(col)
+                    ] = unionColumns[columns.index(col)].replace(
+                        "NULL::double precision",
+                        col
+                    )
+
             uSql = """
                 SELECT
                     end_time, %s
@@ -224,11 +238,14 @@ temporalFilter:
             " UNION ".join(unions)
         )
 
-        # istsos.debug(
-        #     (
-        #         yield from cur.mogrify(sql, tuple(params*len(unions)))
-        #     ).decode("utf-8")
-        # )
+        istsos.debug(
+            (
+                yield from cur.mogrify(sql, tuple(params*len(unions)))
+            ).decode("utf-8")
+        )
+
+        sqlExtensionUnit="""CREATE EXTENSION IF NOT EXISTS unit;"""
+        yield from cur.execute(sqlExtensionUnit)
 
         yield from cur.execute(sql, tuple(params*len(unions)))
         rec = yield from cur.fetchone()
@@ -425,8 +442,6 @@ temporalFilter:
                 if 'in_unit' in request['json']:                
                     To_unit=request['json']['in_unit']
                     convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
-                    # print('Print convert query for postgresql-unit')
-                    # print(convert_unit)
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
@@ -559,14 +574,8 @@ temporalFilter:
                 yield from cur.mogrify(sql, tuple(params*len(unions)))
             ).decode("utf-8")
         )        
-        # istsos.debug(
-        #     (
-        #         yield from cur.mogrify(sql, tuple(params*2))
-        #     ).decode("utf-8")
-        # )
-
-        # print("Observation.py")
-        # print(sql)
+        sqlExtensionUnit="""CREATE EXTENSION IF NOT EXISTS unit;"""
+        yield from cur.execute(sqlExtensionUnit)
         yield from cur.execute(sql, tuple(params*len(unions)))
         # yield from cur.execute(sql, tuple(params*0))
         rec = yield from cur.fetchone()
@@ -583,6 +592,7 @@ temporalFilter:
         op_filter = request.get_filter('observedProperties')
         tables = {}
         columns = []
+        ConvertUnit=''
 
         for offering in request['offerings']:
             tName = "_%s" % offering['name'].lower()
@@ -600,6 +610,7 @@ temporalFilter:
                         columns.append(op['column'])
                         # columns_qi.append('%s_qi' % op['column'])
                         tables[tName].append(op['column'])
+                        ConvertUnit=op['uom']
 
             elif offering.is_array():
                 raise Exception("Not implemented yet")
@@ -614,6 +625,7 @@ temporalFilter:
                     columns.append(op['column'])
                     # columns_qi.append('%s_qi' % op['column'])
                     tables[tName].append(op['column'])
+                    ConvertUnit=op['uom']
 
         unions = []
         unionSelect = []
@@ -667,12 +679,29 @@ temporalFilter:
             off_cols = tables[table]
             cols = unionColumns.copy()
             for col in off_cols:
-                cols[
-                    columns.index(col)
-                ] = unionColumns[columns.index(col)].replace(
-                    "NULL::double precision",
-                    col
-                )
+                if 'in_unit' in request['json']:                
+                    To_unit=request['json']['in_unit']
+                    convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                    cols[
+                        columns.index(col)
+                    ] = unionColumns[columns.index(col)].replace(
+                        "NULL::double precision",
+                        convert_unit
+                    )
+                else:
+                    cols[
+                        columns.index(col)
+                    ] = unionColumns[columns.index(col)].replace(
+                        "NULL::double precision",
+                        col
+                    )
+
+                # cols[
+                #     columns.index(col)
+                # ] = unionColumns[columns.index(col)].replace(
+                #     "NULL::double precision",
+                #     col
+                # )
             uSql = """
                 SELECT
                     end_time, %s
@@ -729,6 +758,8 @@ temporalFilter:
         # print('observation.py')
         # print(sql)
         # yield from cur.execute(sql, tuple(params*2)
+        sqlExtensionUnit="""CREATE EXTENSION IF NOT EXISTS unit;"""
+        yield from cur.execute(sqlExtensionUnit)
         yield from cur.execute(sql, tuple(params*len(unions)))
         rec = yield from cur.fetchone()
         # print(rec)
@@ -746,6 +777,8 @@ temporalFilter:
         table_name = "data._%s" % offering['name'].lower()
 
         columns = []
+        ConvertUnit=''
+        convert_unit=''
         # columns_qi = []
         op_filter = request.get_filter('observedProperties')
 
@@ -783,6 +816,7 @@ temporalFilter:
                         })
                     )
                     columns.append(op['column'])
+                    ConvertUnit=op['uom']
                     # columns_qi.append('%s_qi' % op['column'])
 
         elif offering.is_array():
@@ -805,7 +839,14 @@ temporalFilter:
                         "uom": op['uom']
                     })
                 columns.append(op['column'])
+                ConvertUnit=op['uom']
                 # columns_qi.append('%s_qi' % op['column'])
+
+        if 'in_unit' in request['json']:                
+            To_unit=request['json']['in_unit']
+            convert_unit="%s*'%s'::unit@@'%s' as %s "%(", ".join(columns), ConvertUnit, To_unit, ", ".join(columns))
+        else :
+            convert_unit="%s"%(", ".join(columns))
 
         observation["phenomenonTime"] = {
             "timePeriod": {
@@ -870,17 +911,27 @@ temporalFilter:
                 columns[0],
                 json.dumps(observation["observedProperty"])
             )
-
+        
+        # convert_unit=''
+        # if 'in_unit' in request['json']:                
+        #     To_unit=request['json']['in_unit']
+        #     convert_unit="%s*'%s'::unit@@'%s' as %s "%(", ".join(columns), ConvertUnit, To_unit, ", ".join(columns))
+        # else
+        #     convert_unit="%s"%(", ".join(columns))
+        # print('print convert unit'%convert_unit)
+        # convert_unit="*'m'::unit@@'cm' as _9"
         sql = """
             SELECT
                 begin_time,
                 end_time,
                 result_time,
                 %s""" % (
-                            ", ".join(columns)
+                             convert_unit
                 ) + """
             FROM %s
             """ % table_name
+        print('GetData Called')
+        print(sql)
         temporal = []
         where = []
         params = []
@@ -930,6 +981,9 @@ temporalFilter:
                 yield from cur.mogrify(sql, tuple(params))
             ).decode("utf-8")
         )
+
+        sqlExtensionUnit="""CREATE EXTENSION IF NOT EXISTS unit;"""
+        yield from cur.execute(sqlExtensionUnit)
 
         yield from cur.execute(sql, tuple(params))
         rec = yield from cur.fetchone()
