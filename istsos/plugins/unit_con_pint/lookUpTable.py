@@ -4,7 +4,7 @@ lookups = {
     "degK":["°K", "kelvin", "degK", "tempK"],
      }
 
- class LookUpTable():
+ class LookUpTable(object):
  	def findLookUp(self, unit):
  		for key, value in lookups.items():
             if str(unit).lower() in value:

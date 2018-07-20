@@ -184,7 +184,7 @@ temporalFilter:
             for col in off_cols:
                 if 'in_unit' in request['json']:                
                     To_unit=request['json']['in_unit']
-                    convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                    convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
@@ -441,7 +441,7 @@ temporalFilter:
                 # )
                 if 'in_unit' in request['json']:                
                     To_unit=request['json']['in_unit']
-                    convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                    convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
@@ -681,7 +681,7 @@ temporalFilter:
             for col in off_cols:
                 if 'in_unit' in request['json']:                
                     To_unit=request['json']['in_unit']
-                    convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                    convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
@@ -844,7 +844,7 @@ temporalFilter:
 
         if 'in_unit' in request['json']:                
             To_unit=request['json']['in_unit']
-            convert_unit="%s*'%s'::unit@@'%s' as %s "%(", ".join(columns), ConvertUnit, To_unit, ", ".join(columns))
+            convert_unit="(%s::text||'%s')::unit@@'%s' as %s "%(", ".join(columns), ConvertUnit, To_unit, ", ".join(columns))
         else :
             convert_unit="%s"%(", ".join(columns))
 
