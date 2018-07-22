@@ -2,6 +2,11 @@
 # istSOS. See https://istsos.org/
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
+lookups = {
+    "degC":["°C", "celcius", "degree Celsius", "degree-celsius", "degree-celsius", "degree", "degree centigrade", "degcelsius", "degC"],
+    "degF":["°F", "fahrenheit", "degfahrenheit", "degF", "degfahrenheit", "degree-fahrenheit", "degree fahrenheit"],
+    "degK":["°K", "kelvin", "degK", "tempK"],
+     }
 
 import asyncio
 import istsos

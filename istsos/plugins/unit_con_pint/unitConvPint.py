@@ -2,7 +2,7 @@ import asyncio
 from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
 from pint import UnitRegistry, set_application_registry
-ureg = UnitRegistry()
+ureg = UnitRegistry(autoconvert_offset_to_baseunit = True)
 set_application_registry(ureg)
 Q_ = ureg.Quantity
 
@@ -51,6 +51,7 @@ class UnitConvPint(CompositeAction):
             # change1=change.to(ureg.meter)
             # change2=change1.magnitude
             change=str(rec[1])+"*"+from_unit+"to"+to_unit
+            # change=Q_(str(rec[1]), ureg.degC).to(ureg.kelvin)
             # change=str(rec[1])+"*degC"+"to"+"degF"
             # change=str(rec[1])+"*ureg.degC"+"to"+"ureg.degF"
             # change=rec[1]*ureg.degC
