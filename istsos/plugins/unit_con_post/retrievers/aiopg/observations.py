@@ -2,6 +2,11 @@
 # istSOS. See https://istsos.org/
 # License: https://github.com/istSOS/istsos3/master/LICENSE.md
 # Version: v3.0.0
+lookups = {
+    "°C":["°C", "celcius", "degree Celsius", "degree-celsius", "degree-celsius", "degree", "degree centigrade", "degcelsius", "degC"],
+    "°F":["°F", "fahrenheit", "degfahrenheit", "degF", "degfahrenheit", "degree-fahrenheit", "degree fahrenheit"],
+    "°K":["°K", "kelvin", "degK", "tempK"],
+     }
 
 import asyncio
 import istsos
@@ -11,6 +16,7 @@ from istsos.actions.retrievers.observations import Observations
 from istsos.entity.observation import Observation
 from istsos.entity.observedProperty import (
     ObservedProperty, ObservedPropertyComplex)
+
 
 
 class Observations(Observations):
@@ -67,6 +73,11 @@ temporalFilter:
                     yield from self.__get_data(offering, request)
 
         # istsos.debug(request['observations'])
+    @asyncio.coroutine
+    def findLookUp(self, unit):
+        for key, value in lookups.items():
+            if str(unit).lower() in (n.lower() for n in value):
+                return key
 
     @asyncio.coroutine
     def __get_array_2(self, offerings, request):
@@ -122,7 +133,7 @@ temporalFilter:
                     columns.append(op['column'])
                     # columns_qi.append('%s_qi' % op['column'])
                     tables[tName].append(op['column'])
-                    ConvertUnit=op['uom']
+                    ConvertUnit=findLookUp(op['uom'])
                     headers.append({
                         "type": "number",
                         "name": op['name'],
@@ -292,7 +303,7 @@ temporalFilter:
                         columns.append(op['column'])
                         # columns_qi.append('%s_qi' % op['column'])
                         tables[tName].append(op['column'])
-                        ConvertUnit=op['uom']
+                        ConvertUnit=yield from self.findLookUp(op['uom'])
                         headers.append({
                             "type": "number",
                             "name": op['name'],
@@ -440,7 +451,7 @@ temporalFilter:
                 #     col+"*'m'::unit@@'mm' "
                 # )
                 if 'in_unit' in request['json']:                
-                    To_unit=request['json']['in_unit']
+                    To_unit=yield from self.findLookUp(request['json']['in_unit'])
                     convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
                     cols[
                         columns.index(col)
