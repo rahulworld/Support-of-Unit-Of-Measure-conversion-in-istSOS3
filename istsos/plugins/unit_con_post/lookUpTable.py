@@ -9,11 +9,12 @@ lookups = {
 class LookUpTable(object):
 	def findLookUp(self, unit):
 		for key, value in lookups.items():
-		    if str(unit).lower() in (n.lower() for n in value):
-		        return key
+			if str(unit).lower() in (n.lower() for n in value):
+				return key
+		return(unit)
 
 
 a=LookUpTable()
 print('hello world')
-print(a.findLookUp("degF"))
+print(a.findLookUp("deg-F"))
 # print(findLookUp1("degF"))

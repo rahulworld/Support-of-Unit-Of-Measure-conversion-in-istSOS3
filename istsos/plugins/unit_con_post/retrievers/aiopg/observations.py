@@ -6,6 +6,10 @@ lookups = {
     "°C":["°C", "celcius", "degree Celsius", "degree-celsius", "degree-celsius", "degree", "degree centigrade", "degcelsius", "degC"],
     "°F":["°F", "fahrenheit", "degfahrenheit", "degF", "degfahrenheit", "degree-fahrenheit", "degree fahrenheit"],
     "°K":["°K", "kelvin", "degK", "tempK"],
+    "°R":["°R", "Rankine", "°Ra"],
+    "°De":["°De", "Delisle"],
+    "°N":["°N", "Newton"],
+    "°N":["°N", "Newton"],
      }
 
 import asyncio
@@ -78,6 +82,7 @@ temporalFilter:
         for key, value in lookups.items():
             if str(unit).lower() in (n.lower() for n in value):
                 return key
+        return(unit)
 
     @asyncio.coroutine
     def __get_array_2(self, offerings, request):
