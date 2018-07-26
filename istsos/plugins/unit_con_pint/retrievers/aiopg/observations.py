@@ -237,6 +237,8 @@ temporalFilter:
 
         yield from cur.execute(sql, tuple(params*len(unions)))
         rec = yield from cur.fetchone()
+        print('Data in Pint')
+        print(rec)
         request['observations'] = {}
         for idx in range(0, len(headers)):
             header = headers[idx]
