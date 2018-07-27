@@ -112,6 +112,97 @@ lookups = {
     "gal/min":["gal/min","gallon/min"],
     "yd^3/s":["yd^3/s","yd3/s"],
 
+    "mcg":["s/m"],
+    "min/km":["min/km"],
+    "s/ft":["s/ft"],
+    "min/km":["min/km"],
+
+    "Pa":["Pa"],
+    "hPa":["hPa"],
+    "kPa":["kPa"],
+    "MPa":["MPa"],
+    "bar":["bar"],
+    "torr":["torr"],
+    "psi":["psi"],
+    "ksi":["ksi"],
+
+    "b":["b"],
+    "Kb":["Kb"],
+    "Mb":["Mb"],
+    "Gb":["Gb"],
+    "Tb":["Tb"],
+    "B":["B"],
+    "KB":["KB"],
+    "MB":["MB"],
+    "GB":["GB"],
+    "TB":["TB"],
+
+    "lx":["lx"],
+    "ft-cd":["ft-cd"],
+
+    "ppm":["ppm"],
+    "ppb":["ppb"],
+    "ppt":["ppt"],
+    "ppq":["ppq"],
+
+    "V":["V"],
+    "mV":["mV"],
+    "kV":["kV"],
+
+    "A":["A"],
+    "mA":["mA"],
+    "kA":["kA"],
+
+    "W":["W"],
+    "mW":["mW"],
+    "kW":["kW"],
+    "MW":["MW"],
+    "GW":["GW"],
+
+    "VA":["VA"],
+    "mVA":["mVA"],
+    "kVA":["kVA"],
+    "MVA":["MVA"],
+    "GVA":["GVA"], 
+
+    "VAR":["VAR"],
+    "mVAR":["mVAR"],
+    "kVAR":["kVAR"],
+    "MVAR":["MVAR"],
+    "GVAR":["GVAR"],
+
+    "Wh":["Wh"],
+    "mWh":["mWh"],
+    "MWh":["MWh"],
+    "GWh":["GWh"],
+    "J":["J"],
+    "kJ":["kJ"],
+
+    "VARh":["VARh"],
+    "mVARh":["mVARh"],
+    "kVARh":["kVARh"],
+    "MVARh":["MVARh"],
+    "GVARh":["GVARh"],
+
+    "deg":["deg"],
+    "rad":["rad"],
+    "grad":["grad"],
+    "arcmin":["arcmin"],
+    "arcsec":["arcsec"],
+
+    "c":["c"],
+    "mC":["mC"],
+    "μC":["μC"],
+    "nC":["nC"],
+    "pC":["pC"],
+
+    "N":["N"],
+    "kN":["kN"],
+    "lbf":["lbf"],
+
+    "g":["g", "g-forece"],
+    "m/s2":["m/s2"],
+    
      }
 
 import asyncio
