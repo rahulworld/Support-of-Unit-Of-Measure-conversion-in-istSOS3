@@ -208,6 +208,7 @@ lookups = {
 import asyncio
 import istsos
 import json
+import csv
 from istsos import setting
 from istsos.actions.retrievers.observations import Observations
 from istsos.entity.observation import Observation
@@ -268,14 +269,60 @@ temporalFilter:
             else:
                 for offering in request['offerings']:
                     yield from self.__get_data(offering, request)
-
         # istsos.debug(request['observations'])
+
     @asyncio.coroutine
     def findLookUp(self, unit):
         for key, value in lookups.items():
             if str(unit).lower() in (n.lower() for n in value):
                 return key
         return(unit)
+
+    @asyncio.coroutine
+    def __download_file(self, request, data, headers=None):
+        if request.get_filter("download_file") is not None:
+            if 'file_name' in request.get_filter("download_file"):
+                file_name=request.get_filter("download_file")['file_name']
+            else:
+                file_name=request.get_filter("offerings")
+
+            if 'location' in request.get_filter("download_file"):
+                download_location=request.get_filter("download_file")['location']
+            else:
+                download_location='istsos/plugins/unit_con_post/download_file/'
+
+            file_detail = """%s%s.csv""" % (download_location, file_name)
+            f = csv.writer(open(file_detail, "w"))
+            if headers is not None:
+                f.writerow(headers)
+            for x in data:
+                f.writerow(x)
+            debug_detail = """%s.csv download location is %s""" % (file_name, download_location)
+            istsos.debug(debug_detail)
+
+    @asyncio.coroutine
+    def __download_json(self, request, data):
+        if request.get_filter("download_file") is not None:
+            if 'file_name' in request.get_filter("download_file"):
+                file_name=request.get_filter("download_file")['file_name']
+            else:
+                file_name=request.get_filter("offerings")
+
+            if 'location' in request.get_filter("download_file"):
+                download_location=request.get_filter("download_file")['location']
+            else:
+                download_location='istsos/plugins/unit_con_post/download_file/'
+
+            file_detail = """%s%s.json""" % (download_location, file_name)
+            with open(file_detail, 'w') as outfile:
+                json.dump(data, outfile)
+            # f = csv.writer(open(file_detail, "w"))
+            # # f.writerow(rec[0])
+            # for x in rec[0]:
+            #     f.writerow([x])
+            debug_detail = """%s.json download location is %s""" % (file_name, download_location)
+            istsos.debug(debug_detail)
+
 
     @asyncio.coroutine
     def __get_array_2(self, offerings, request):
@@ -331,7 +378,7 @@ temporalFilter:
                     columns.append(op['column'])
                     # columns_qi.append('%s_qi' % op['column'])
                     tables[tName].append(op['column'])
-                    ConvertUnit=findLookUp(op['uom'])
+                    ConvertUnit=yield from self.findLookUp(op['uom'])
                     headers.append({
                         "type": "number",
                         "name": op['name'],
@@ -391,9 +438,17 @@ temporalFilter:
             off_cols = tables[table]
             cols = unionColumns.copy()
             for col in off_cols:
-                if 'in_unit' in request['json']:                
-                    To_unit=request['json']['in_unit']
-                    convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                if request.get_filter("in_unit") is not None:
+                    convert_unit=''
+                    To_unit=yield from self.findLookUp(request.get_filter("in_unit"))
+                    if request.get_filter("operation") is not None:
+                        if 'unit' in request.get_filter("operation"):
+                            unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                            if 'add' in request.get_filter("operation"):
+                                add=request.get_filter("operation")['add']              
+                                convert_unit="""(%s::text||'%s')::unit+ '%s %s' @@'%s' """%(col, ConvertUnit, add, unit, To_unit)
+                                print(convert_unit)
+                    # convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
@@ -458,10 +513,14 @@ temporalFilter:
 
         yield from cur.execute(sql, tuple(params*len(unions)))
         rec = yield from cur.fetchone()
+
         request['observations'] = {}
         for idx in range(0, len(headers)):
             header = headers[idx]
             request['observations'][header['column']] = rec[idx]
+
+        yield from self.__download_file(request, rec, headers)
+
         request['headers'] = headers
         istsos.debug("Data is fetched!")
 
@@ -648,8 +707,8 @@ temporalFilter:
                 #     "NULL::double precision",
                 #     col+"*'m'::unit@@'mm' "
                 # )
-                if 'in_unit' in request['json']:                
-                    To_unit=yield from self.findLookUp(request['json']['in_unit'])
+                if request.get_filter("in_unit") is not None:                
+                    To_unit=request.get_filter("in_unit")
                     convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
                     cols[
                         columns.index(col)
@@ -788,20 +847,9 @@ temporalFilter:
         yield from cur.execute(sql, tuple(params*len(unions)))
         # yield from cur.execute(sql, tuple(params*0))
         rec = yield from cur.fetchone()
-        print('Post Unit Conversion in istsos3')
-        print(rec[0][0][0])
-        import json
-        import csv
-        # x = json.loads(rec[0])
-        f = csv.writer(open("test1.csv", "w"))
-        f.writerow(["timeseries", "value"])
-        for x in rec[0]:
-            f.writerow(x)
-        # import csv
 
-        # with open('file.csv', 'wb') as myfile:
-        #     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-        #     wr.writerow(rec[0])
+        yield from self.__download_file(request, rec[0], headers)
+
         request['observations'] = rec[0]
         request['headers'] = headers
         # recs = yield from cur.fetchall()
@@ -902,8 +950,8 @@ temporalFilter:
             off_cols = tables[table]
             cols = unionColumns.copy()
             for col in off_cols:
-                if 'in_unit' in request['json']:                
-                    To_unit=request['json']['in_unit']
+                if request.get_filter("in_unit") is not None:                
+                    To_unit=request.get_filter("in_unit")
                     convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
                     cols[
                         columns.index(col)
@@ -988,6 +1036,9 @@ temporalFilter:
         # print(rec)
         # print('This is successful')
         request['observations'] = rec[0]
+
+        yield from self.__download_json(request, rec[0])
+
         # recs = yield from cur.fetchall()
         istsos.debug("Data is fetched!")
 
@@ -1065,8 +1116,8 @@ temporalFilter:
                 ConvertUnit=op['uom']
                 # columns_qi.append('%s_qi' % op['column'])
 
-        if 'in_unit' in request['json']:                
-            To_unit=request['json']['in_unit']
+        if request.get_filter("in_unit") is not None:                
+            To_unit=request.get_filter("in_unit")
             convert_unit="(%s::text||'%s')::unit@@'%s' as %s "%(", ".join(columns), ConvertUnit, To_unit, ", ".join(columns))
         else :
             convert_unit="%s"%(", ".join(columns))
@@ -1211,5 +1262,8 @@ temporalFilter:
         yield from cur.execute(sql, tuple(params))
         rec = yield from cur.fetchone()
         request['observations'] += rec[0]
+
+        yield from self.__download_json(request, rec[0])
+
         # recs = yield from cur.fetchall()
         istsos.debug("Data is fetched!")
