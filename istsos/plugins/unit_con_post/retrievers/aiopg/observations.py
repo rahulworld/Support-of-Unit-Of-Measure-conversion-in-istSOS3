@@ -202,7 +202,7 @@ lookups = {
 
     "g":["g", "g-forece"],
     "m/s2":["m/s2"],
-    
+
      }
 
 import asyncio
@@ -788,6 +788,20 @@ temporalFilter:
         yield from cur.execute(sql, tuple(params*len(unions)))
         # yield from cur.execute(sql, tuple(params*0))
         rec = yield from cur.fetchone()
+        print('Post Unit Conversion in istsos3')
+        print(rec[0][0][0])
+        import json
+        import csv
+        # x = json.loads(rec[0])
+        f = csv.writer(open("test1.csv", "w"))
+        f.writerow(["timeseries", "value"])
+        for x in rec[0]:
+            f.writerow(x)
+        # import csv
+
+        # with open('file.csv', 'wb') as myfile:
+        #     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+        #     wr.writerow(rec[0])
         request['observations'] = rec[0]
         request['headers'] = headers
         # recs = yield from cur.fetchall()
