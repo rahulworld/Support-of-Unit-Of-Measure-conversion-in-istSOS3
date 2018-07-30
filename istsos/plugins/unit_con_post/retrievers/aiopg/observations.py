@@ -438,17 +438,93 @@ temporalFilter:
             off_cols = tables[table]
             cols = unionColumns.copy()
             for col in off_cols:
+                convert_unit=''
                 if request.get_filter("in_unit") is not None:
-                    convert_unit=''
                     To_unit=yield from self.findLookUp(request.get_filter("in_unit"))
                     if request.get_filter("operation") is not None:
                         if 'unit' in request.get_filter("operation"):
                             unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
-                            if 'add' in request.get_filter("operation"):
-                                add=request.get_filter("operation")['add']              
-                                convert_unit="""(%s::text||'%s')::unit+ '%s %s' @@'%s' """%(col, ConvertUnit, add, unit, To_unit)
-                                print(convert_unit)
-                    # convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                            if 'qty' in request.get_filter("operation"):
+                                qty=request.get_filter("operation")['qty']
+                                if 'type' in request.get_filter("operation"):
+                                    if request.get_filter("operation")['type']=='add':
+                                        add=qty
+                                        if qty=='':
+                                            add=0
+                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, To_unit)
+                                    elif request.get_filter("operation")['type']=='sub':
+                                        sub=qty
+                                        if qty=='':
+                                            sub=0
+                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, To_unit)
+                                    elif request.get_filter("operation")['type']=='mul':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
+                                    elif request.get_filter("operation")['type']=='div':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
+                        else:
+                            if 'qty' in request.get_filter("operation"):
+                                qty=request.get_filter("operation")['qty']
+                                if 'type' in request.get_filter("operation"):
+                                    if request.get_filter("operation")['type']=='add':
+                                        add=qty
+                                        if qty=='':
+                                            add=0
+                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, ConvertUnit, To_unit)
+                                    elif request.get_filter("operation")['type']=='sub':
+                                        sub=qty
+                                        if qty=='':
+                                            sub=0
+                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, ConvertUnit, To_unit)
+                                    elif request.get_filter("operation")['type']=='mul':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
+                                    elif request.get_filter("operation")['type']=='div':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
+                    else:
+                        convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col, ConvertUnit, To_unit)
+                    cols[
+                        columns.index(col)
+                    ] = unionColumns[columns.index(col)].replace(
+                        "NULL::double precision",
+                        convert_unit
+                    )
+                elif request.get_filter("operation") is not None:
+                    if 'unit' in request.get_filter("operation"):
+                        unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                        if 'qty' in request.get_filter("operation"):
+                            qty=request.get_filter("operation")['qty']
+                            if 'type' in request.get_filter("operation"):
+                                if request.get_filter("operation")['type']=='add':
+                                    add=qty
+                                    if qty=='':
+                                        add=0
+                                    convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, ConvertUnit)
+                                elif request.get_filter("operation")['type']=='sub':
+                                    sub=qty
+                                    if qty=='':
+                                        sub=0
+                                    convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, ConvertUnit)
+                                elif request.get_filter("operation")['type']=='mul':
+                                    mul=qty
+                                    if qty=='':
+                                        mul=1
+                                    convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
+                                elif request.get_filter("operation")['type']=='div':
+                                    mul=qty
+                                    if qty=='':
+                                        mul=1
+                                    convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
@@ -707,9 +783,93 @@ temporalFilter:
                 #     "NULL::double precision",
                 #     col+"*'m'::unit@@'mm' "
                 # )
-                if request.get_filter("in_unit") is not None:                
-                    To_unit=request.get_filter("in_unit")
-                    convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                convert_unit=''
+                if request.get_filter("in_unit") is not None:
+                    To_unit=yield from self.findLookUp(request.get_filter("in_unit"))
+                    if request.get_filter("operation") is not None:
+                        if 'unit' in request.get_filter("operation"):
+                            unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                            if 'qty' in request.get_filter("operation"):
+                                qty=request.get_filter("operation")['qty']
+                                if 'type' in request.get_filter("operation"):
+                                    if request.get_filter("operation")['type']=='add':
+                                        add=qty
+                                        if qty=='':
+                                            add=0
+                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, To_unit)
+                                    elif request.get_filter("operation")['type']=='sub':
+                                        sub=qty
+                                        if qty=='':
+                                            sub=0
+                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, To_unit)
+                                    elif request.get_filter("operation")['type']=='mul':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
+                                    elif request.get_filter("operation")['type']=='div':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
+                        else:
+                            if 'qty' in request.get_filter("operation"):
+                                qty=request.get_filter("operation")['qty']
+                                if 'type' in request.get_filter("operation"):
+                                    if request.get_filter("operation")['type']=='add':
+                                        add=qty
+                                        if qty=='':
+                                            add=0
+                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, ConvertUnit, To_unit)
+                                    elif request.get_filter("operation")['type']=='sub':
+                                        sub=qty
+                                        if qty=='':
+                                            sub=0
+                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, ConvertUnit, To_unit)
+                                    elif request.get_filter("operation")['type']=='mul':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
+                                    elif request.get_filter("operation")['type']=='div':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
+                    else:
+                        convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col, ConvertUnit, To_unit)
+                    cols[
+                        columns.index(col)
+                    ] = unionColumns[columns.index(col)].replace(
+                        "NULL::double precision",
+                        convert_unit
+                    )
+                elif request.get_filter("operation") is not None:
+                    if 'unit' in request.get_filter("operation"):
+                        unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                        if 'qty' in request.get_filter("operation"):
+                            qty=request.get_filter("operation")['qty']
+                            if 'type' in request.get_filter("operation"):
+                                if request.get_filter("operation")['type']=='add':
+                                    add=qty
+                                    if qty=='':
+                                        add=0
+                                    convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, ConvertUnit)
+                                elif request.get_filter("operation")['type']=='sub':
+                                    sub=qty
+                                    if qty=='':
+                                        sub=0
+                                    convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, ConvertUnit)
+                                elif request.get_filter("operation")['type']=='mul':
+                                    mul=qty
+                                    if qty=='':
+                                        mul=1
+                                    convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
+                                elif request.get_filter("operation")['type']=='div':
+                                    mul=qty
+                                    if qty=='':
+                                        mul=1
+                                    convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
@@ -950,9 +1110,93 @@ temporalFilter:
             off_cols = tables[table]
             cols = unionColumns.copy()
             for col in off_cols:
-                if request.get_filter("in_unit") is not None:                
-                    To_unit=request.get_filter("in_unit")
-                    convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col,ConvertUnit,To_unit)
+                convert_unit=''
+                if request.get_filter("in_unit") is not None:
+                    To_unit=yield from self.findLookUp(request.get_filter("in_unit"))
+                    if request.get_filter("operation") is not None:
+                        if 'unit' in request.get_filter("operation"):
+                            unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                            if 'qty' in request.get_filter("operation"):
+                                qty=request.get_filter("operation")['qty']
+                                if 'type' in request.get_filter("operation"):
+                                    if request.get_filter("operation")['type']=='add':
+                                        add=qty
+                                        if qty=='':
+                                            add=0
+                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, To_unit)
+                                    elif request.get_filter("operation")['type']=='sub':
+                                        sub=qty
+                                        if qty=='':
+                                            sub=0
+                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, To_unit)
+                                    elif request.get_filter("operation")['type']=='mul':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
+                                    elif request.get_filter("operation")['type']=='div':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
+                        else:
+                            if 'qty' in request.get_filter("operation"):
+                                qty=request.get_filter("operation")['qty']
+                                if 'type' in request.get_filter("operation"):
+                                    if request.get_filter("operation")['type']=='add':
+                                        add=qty
+                                        if qty=='':
+                                            add=0
+                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, ConvertUnit, To_unit)
+                                    elif request.get_filter("operation")['type']=='sub':
+                                        sub=qty
+                                        if qty=='':
+                                            sub=0
+                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, ConvertUnit, To_unit)
+                                    elif request.get_filter("operation")['type']=='mul':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
+                                    elif request.get_filter("operation")['type']=='div':
+                                        mul=qty
+                                        if qty=='':
+                                            mul=1
+                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
+                    else:
+                        convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col, ConvertUnit, To_unit)
+                    cols[
+                        columns.index(col)
+                    ] = unionColumns[columns.index(col)].replace(
+                        "NULL::double precision",
+                        convert_unit
+                    )
+                elif request.get_filter("operation") is not None:
+                    if 'unit' in request.get_filter("operation"):
+                        unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                        if 'qty' in request.get_filter("operation"):
+                            qty=request.get_filter("operation")['qty']
+                            if 'type' in request.get_filter("operation"):
+                                if request.get_filter("operation")['type']=='add':
+                                    add=qty
+                                    if qty=='':
+                                        add=0
+                                    convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, ConvertUnit)
+                                elif request.get_filter("operation")['type']=='sub':
+                                    sub=qty
+                                    if qty=='':
+                                        sub=0
+                                    convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, ConvertUnit)
+                                elif request.get_filter("operation")['type']=='mul':
+                                    mul=qty
+                                    if qty=='':
+                                        mul=1
+                                    convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
+                                elif request.get_filter("operation")['type']=='div':
+                                    mul=qty
+                                    if qty=='':
+                                        mul=1
+                                    convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
