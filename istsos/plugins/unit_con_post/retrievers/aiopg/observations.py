@@ -602,6 +602,7 @@ temporalFilter:
         # print(request[0]['offerings']['observable_properties'])
         # To_unit=request['json']['in_unit']
         # print("################################3")
+        conversion_uom=''
         ConvertUnit=''
         dbmanager = yield from self.init_connection()
         cur = dbmanager.cur
@@ -1034,7 +1035,7 @@ temporalFilter:
         tables = {}
         columns = []
         ConvertUnit=''
-
+        conversion_uom=''
         for offering in request['offerings']:
             tName = "_%s" % offering['name'].lower()
             if offering.is_complex():
