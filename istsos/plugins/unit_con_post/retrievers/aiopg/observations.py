@@ -1019,6 +1019,15 @@ temporalFilter:
         # yield from cur.execute(sql, tuple(params*0))
         rec = yield from cur.fetchone()
 
+        headers.append({
+            "type": "number",
+            "name": op['name'],
+            "definition": op['definition'],
+            "offering": offering['name'],
+            "final_uom": conversion_uom,
+            "column": op['column']
+        })
+
         yield from self.__download_file(request, rec[0], headers)
 
         request['observations'] = rec[0]
@@ -1036,6 +1045,11 @@ temporalFilter:
         columns = []
         ConvertUnit=''
         conversion_uom=''
+        headers = [{
+            "type": "time",
+            "name": "Phenomenon Time",
+            "column": "datetime"
+        }]
         for offering in request['offerings']:
             tName = "_%s" % offering['name'].lower()
             if offering.is_complex():
@@ -1302,11 +1316,21 @@ temporalFilter:
         yield from cur.execute(sqlExtensionUnit)
         yield from cur.execute(sql, tuple(params*len(unions)))
         rec = yield from cur.fetchone()
+        headers.append({
+            "type": "number",
+            "name": op['name'],
+            "definition": op['definition'],
+            "offering": offering['name'],
+            "final_uom": conversion_uom,
+            "column": op['column']
+        })
         # print(rec)
         # print('This is successful')
         request['observations'] = rec[0]
+        request['headers'] = headers
 
         yield from self.__download_json(request, rec[0])
+        # yield from self.__download_file(request, rec[0], headers)
 
         # recs = yield from cur.fetchall()
         istsos.debug("Data is fetched!")
