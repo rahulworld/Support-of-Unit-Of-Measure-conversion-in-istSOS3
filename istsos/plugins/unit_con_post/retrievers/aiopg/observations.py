@@ -1134,21 +1134,25 @@ temporalFilter:
                                         if qty=='':
                                             add=0
                                         convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, To_unit)
+                                        conversion_uom=To_unit
                                     elif request.get_filter("operation")['type']=='sub':
                                         sub=qty
                                         if qty=='':
                                             sub=0
                                         convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, To_unit)
+                                        conversion_uom=To_unit
                                     elif request.get_filter("operation")['type']=='mul':
                                         mul=qty
                                         if qty=='':
                                             mul=1
                                         convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
+                                        conversion_uom=""" %s*%s """%(To_unit,unit)
                                     elif request.get_filter("operation")['type']=='div':
                                         mul=qty
                                         if qty=='':
                                             mul=1
                                         convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
+                                        conversion_uom=""" %s/%s """%(To_unit,unit)
                         else:
                             if 'qty' in request.get_filter("operation"):
                                 qty=request.get_filter("operation")['qty']
@@ -1158,23 +1162,28 @@ temporalFilter:
                                         if qty=='':
                                             add=0
                                         convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, ConvertUnit, To_unit)
+                                        conversion_uom=To_unit
                                     elif request.get_filter("operation")['type']=='sub':
                                         sub=qty
                                         if qty=='':
                                             sub=0
                                         convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, ConvertUnit, To_unit)
+                                        conversion_uom=To_unit
                                     elif request.get_filter("operation")['type']=='mul':
                                         mul=qty
                                         if qty=='':
                                             mul=1
                                         convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
+                                        conversion_uom=""" %s*%s """%(To_unit,To_unit)
                                     elif request.get_filter("operation")['type']=='div':
                                         mul=qty
                                         if qty=='':
                                             mul=1
                                         convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
+                                        conversion_uom=""" %s/%s """%(To_unit,To_unit)
                     else:
                         convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col, ConvertUnit, To_unit)
+                        conversion_uom=To_unit
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
@@ -1192,21 +1201,25 @@ temporalFilter:
                                     if qty=='':
                                         add=0
                                     convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, ConvertUnit)
+                                    conversion_uom=ConvertUnit
                                 elif request.get_filter("operation")['type']=='sub':
                                     sub=qty
                                     if qty=='':
                                         sub=0
                                     convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, ConvertUnit)
+                                    conversion_uom=ConvertUnit
                                 elif request.get_filter("operation")['type']=='mul':
                                     mul=qty
                                     if qty=='':
                                         mul=1
                                     convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
+                                    conversion_uom=""" %s*%s """%(ConvertUnit,unit)
                                 elif request.get_filter("operation")['type']=='div':
                                     mul=qty
                                     if qty=='':
                                         mul=1
                                     convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
+                                    conversion_uom=""" %s/%s """%(ConvertUnit,unit)
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
@@ -1220,6 +1233,7 @@ temporalFilter:
                         "NULL::double precision",
                         col
                     )
+
 
                 # cols[
                 #     columns.index(col)
