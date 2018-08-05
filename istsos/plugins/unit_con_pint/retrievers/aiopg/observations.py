@@ -444,16 +444,12 @@ temporalFilter:
 
     @asyncio.coroutine
     def __get_array(self, offerings, request):
-        # print("To PRINT REQUEST AT OBSERVATION")
-        # print(request[0]['offerings']['observable_properties'])
-        # To_unit=request['json']['in_unit']
-        # print("################################3")
         ConvertUnit=''
         dbmanager = yield from self.init_connection()
         cur = dbmanager.cur
         op_filter = request.get_filter('observedProperties')
-        # print('Print Unit of observations line 250')
-        # print(op_filter)
+        print('Print Unit of observations line 250')
+        print(op_filter)
         tables = {}
         columns = []
         headers = [{
@@ -514,22 +510,6 @@ temporalFilter:
         unionSelect = []
         jsonKeys = []
         unionColumns = []
-        # for idx in range(0, len(columns)):
-        #     unionSelect.append(
-        #         "SUM(c%s)::text as c%s" % (idx, idx)
-        #     )
-        #     unionColumns.append(
-        #         "NULL::double precision"
-        #     )
-        #     jsonKeys.append("COALESCE(c%s, 'null')" % (idx))
-        # for idx in range(0, len(columns)):
-        #     unionSelect.append(
-        #         "SUM(c%s)::text as c%s" % (idx, idx)
-        #     )
-        #     unionColumns.append(
-        #         "NULL::double precision as c%s" % (idx)
-        #     )
-        #     jsonKeys.append("COALESCE(c%s, 'null')" % (idx))
 
         for idx in range(0, len(columns)):
             unionSelect.append(
@@ -545,30 +525,6 @@ temporalFilter:
         temporal = []
         where = []
         params = []
-        if request.get_filters() is not None:
-            keys = list(request.get_filters())
-            for key in keys:
-                fltr = request.get_filters()[key]
-                if key == 'temporal':
-                    if fltr['fes'] == 'during':
-                        temporal.append("""
-                            begin_time >= %s::timestamp with time zone
-                        AND
-                            end_time <= %s::timestamp with time zone
-                        """)
-                        params.extend(fltr['period'])
-
-                    elif fltr['fes'] == 'equals':
-                        temporal.append("""
-                            begin_time = end_time
-                        AND
-                            begin_time = %s::timestamp with time zone
-                        """)
-                        params.append(fltr['instant'])
-
-                    where.append(
-                        "(%s)" % (' OR '.join(temporal))
-                    )
 
         # print('Print Unit of Measurement')
         # print(headers)
@@ -576,86 +532,17 @@ temporalFilter:
         for table in tables.keys():
             off_cols = tables[table]
             cols = unionColumns.copy()
-            # print('Print col in observations')
-            # print(cols)
-            # print(off_cols)
             for col in off_cols:
-                # ConvertScript="""np.ting from(select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting from(select %s *'m'::unit@ 'mm' as num)as tmp)as np"""% (", ",col)
-                # ConvertScript="""
-                # c0.ting as c0 
-                # from
-                # (
-                # select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting 
-                # from
-                # (
-                # select """+col+ """*'m'::unit@ 'mm' as num from data._belin
-                # )as tmp)"""
-                ##################################
-                # ConvertScript="""np.ting as c0 
-                #     from
-                #     (
-                #     select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting 
-                #     from
-                #     (
-                #     select """+col+ """*'m'::unit@ 'mm' as num
-                #     )as tmp) as np"""
-                # # ConvertScript="np.ting from(select SUBSTRING(CAST(tmp.num as varchar),'[0-9]+') as ting from(select" +col+ "*'m'::unit@ 'mm' as num)as tmp)as np"
-                # print('Printing ConvertScript')
-                # print(ConvertScript)
-                ###################################
-                # cols[
-                #     columns.index(col)
-                # ] = unionColumns[columns.index(col)].replace(
-                #     "NULL::double precision", ConvertScript
-                # )
-                ####################################3
-                # convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
-                # print('Print convert query for postgresql-unit')
-                # print(convert_unit)
-                # cols[
-                #     columns.index(col)
-                # ] = unionColumns[columns.index(col)].replace(
-                #     "NULL::double precision",
-                #     convert_unit
-                # )
-                #############################
-                # cols[
-                #     columns.index(col)
-                # ] = unionColumns[columns.index(col)].replace(
-                #     "NULL::double precision",
-                #     col+"*'m'::unit@@'mm' "
-                # )
-                if 'in_unit' in request['json']:                
-                    To_unit=request['json']['in_unit']
-                    convert_unit="""%s*'%s'::unit@@'%s' """%(col,ConvertUnit,To_unit)
-                    # print('Print convert query for postgresql-unit')
-                    # print(convert_unit)
-                    cols[
-                        columns.index(col)
-                    ] = unionColumns[columns.index(col)].replace(
-                        "NULL::double precision",
-                        convert_unit
-                    )
-                else:
-                    cols[
-                        columns.index(col)
-                    ] = unionColumns[columns.index(col)].replace(
-                        "NULL::double precision",
-                        col
-                    )
+                cols[
+                    columns.index(col)
+                ] = unionColumns[columns.index(col)].replace(
+                    "NULL::double precision",
+                    col
+                )
 
-            # print('Print col in observations 1')
-            # print(cols)
-            # print(off_cols)
-            # uSql = """
-            #     SELECT
-            #         end_time, %s
-            #     FROM
-            #         data.%s
-            # """ % (
-            #     ", ".join(cols), table
-            # )
-
+            print('Print col in observations 1')
+            print(cols)
+            print(off_cols)
             uSql = """
                 SELECT
                     end_time, %s
@@ -664,104 +551,25 @@ temporalFilter:
             """ % (
                 ", ".join(cols), table
             )
+            print('hhhhhhhhhhhhhhhhhhhhhhhhhhhh')
 
-            # print('Query Printing uSql')
-            # print(uSql)
             # uSql = """
             #     SELECT
-            #         end_time, %s '*' %s ::unit@ %s
+            #         end_time, %s
             #     FROM
             #         data.%s
             # """ % (
-            #     ", ".join(cols), ConvertUnit, To_unit, table
+            #     ", ".join(cols), table
             # )
-            if len(where) > 0:
-                uSql += "WHERE %s" % (
-                    'AND'.join(where)
-                )
-            unions.append("(%s)" % uSql)
             # print('Query Printing uSql')
-            # print(uSql)
+            print(uSql)
 
-        jsonSql = """
-            SELECT array_agg(
-                ARRAY[
-                    to_char(end_time, 'YYYY-MM-DD"T"HH24:MI:SSZ'),
-                    %s
-                ]
-            )
-            FROM
-        """ % (
-            ", ".join(jsonKeys),
-        )
-        # print('Query Printing jsonSql')
-        # print(jsonSql)
-        # print('Query Printing unionSelect')
-        # print(unionSelect)
-        # print('union')
-        # print(unions)
-
-        # sql = """
-        #     SET enable_seqscan=false;
-        #     SET SESSION TIME ZONE '+00:00';
-        #     %s
+            print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhertrbbbbbbbbbbbbbbbet')
+        # istsos.debug(
         #     (
-        #         SELECT end_time, %s
-        #         FROM (
-        #             %s
-        #         ) a
-        #         GROUP BY end_time
-        #         ORDER BY end_time
-        #     ) b
-        # """ % (
-        #     jsonSql,
-        #     unionSelect,
-        #     " UNION ".join(unions)
-        # )
-
-        sql = """
-            SET enable_seqscan=false;
-            SET SESSION TIME ZONE '+00:00';
-            %s
-            (
-                SELECT end_time, %s
-                FROM (
-                    %s
-                ) a
-                GROUP BY end_time
-                ORDER BY end_time
-            ) b
-        """ % (
-            jsonSql,
-            unionSelect,
-            " UNION ".join(unions)
-        )
-
-        # sql = """
-        #     SET enable_seqscan=false;
-        #     SET SESSION TIME ZONE '+00:00';
-        #     %s
-        #     (
-        #         SELECT end_time, %s*%s::unit@%s 
-        #         FROM (
-        #             %s
-        #         ) a
-        #         GROUP BY end_time
-        #         ORDER BY end_time
-        #     ) b
-        # """ % (
-        #     jsonSql,
-        #     unionSelect,
-        #     ConvertUnit,
-        #     To_unit,
-        #     " UNION ".join(unions)
-        # )
-
-        istsos.debug(
-            (
-                yield from cur.mogrify(sql, tuple(params*len(unions)))
-            ).decode("utf-8")
-        )        
+        #         yield from cur.mogrify(uSql, tuple(params*len(unions)))
+        #     ).decode("utf-8")
+        # )        
         # istsos.debug(
         #     (
         #         yield from cur.mogrify(sql, tuple(params*2))
@@ -770,11 +578,18 @@ temporalFilter:
 
         # print("Observation.py")
         # print(sql)
-        yield from cur.execute(sql, tuple(params*len(unions)))
-        # yield from cur.execute(sql, tuple(params*0))
+        sql="SELECT _9 as c0 FROM data._belin"
+        yield from cur.execute(sql, { "type": "array" })
+        print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhertredsfsdfggggggggggggggggggggggt')
         rec = yield from cur.fetchone()
-        request['observations'] = rec[0]
-        request['headers'] = headers
+        print('rec1')
+        print(rec)
+        request['observations'] = []
+        # request['headers'] = headers
+        # dbmanager1 = yield from self.init_connection()
+        # cur1 = dbmanager1.cur
+        # yield from cur1.execute(uSql)
+        # rec1 = yield from cur1.fetchone()
         # recs = yield from cur.fetchall()
         istsos.debug("Data is fetched!")
 
