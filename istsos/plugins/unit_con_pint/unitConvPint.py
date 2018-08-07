@@ -246,10 +246,10 @@ class UnitConvPint(CompositeAction):
                 })
             )
         else:
-            print('nothing happened')
-            # request['response'] = Response(
-            #     json_source=Response.get_template({
-            #         "data": request['observations'],
-            #         "headers": request['headers']
-            #     })
-            # )
+            # print('nothing happened')
+            request['response'] = Response(
+                json_source=Response.get_template({
+                    "data": request['observations'],
+                    "headers": request['headers']
+                })
+            )
