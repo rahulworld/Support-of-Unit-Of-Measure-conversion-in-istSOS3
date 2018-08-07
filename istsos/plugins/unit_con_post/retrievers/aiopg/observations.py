@@ -146,12 +146,6 @@ lookups = {
     "MW":["MW"],
     "GW":["GW"],
 
-    "VA":["VA"],
-    "mVA":["mVA"],
-    "kVA":["kVA"],
-    "MVA":["MVA"],
-    "GVA":["GVA"], 
-
     "Wh":["Wh"],
     "mWh":["mWh"],
     "MWh":["MWh"],
@@ -175,7 +169,7 @@ lookups = {
     "lbf":["lbf"],
 
     "gravity":["gravity", "gravity"],
-    "m/s2":["m/s2"],
+    "m/s^2":["m/s^2"]
 
      }
 

@@ -442,14 +442,13 @@ temporalFilter:
         request['headers'] = headers
         istsos.debug("Data is fetched!")
 
+    
     @asyncio.coroutine
     def __get_array(self, offerings, request):
-        ConvertUnit=''
+
         dbmanager = yield from self.init_connection()
         cur = dbmanager.cur
         op_filter = request.get_filter('observedProperties')
-        print('Print Unit of observations line 250')
-        print(op_filter)
         tables = {}
         columns = []
         headers = [{
@@ -474,7 +473,6 @@ temporalFilter:
                         columns.append(op['column'])
                         # columns_qi.append('%s_qi' % op['column'])
                         tables[tName].append(op['column'])
-                        ConvertUnit=op['uom']
                         headers.append({
                             "type": "number",
                             "name": op['name'],
@@ -496,7 +494,6 @@ temporalFilter:
                     columns.append(op['column'])
                     # columns_qi.append('%s_qi' % op['column'])
                     tables[tName].append(op['column'])
-                    ConvertUnit=op['uom']
                     headers.append({
                         "type": "number",
                         "name": op['name'],
@@ -504,13 +501,11 @@ temporalFilter:
                         "offering": offering['name'],
                         "uom": op['uom']
                     })
-        # print('IT Is Unit IN OFFERING')
-        # print(ConvertUnit)
+
         unions = []
         unionSelect = []
         jsonKeys = []
         unionColumns = []
-
         for idx in range(0, len(columns)):
             unionSelect.append(
                 "SUM(c%s)::text as c%s" % (idx, idx)
@@ -525,9 +520,30 @@ temporalFilter:
         temporal = []
         where = []
         params = []
+        if request.get_filters() is not None:
+            keys = list(request.get_filters())
+            for key in keys:
+                fltr = request.get_filters()[key]
+                if key == 'temporal':
+                    if fltr['fes'] == 'during':
+                        temporal.append("""
+                            begin_time >= %s::timestamp with time zone
+                        AND
+                            end_time <= %s::timestamp with time zone
+                        """)
+                        params.extend(fltr['period'])
 
-        # print('Print Unit of Measurement')
-        # print(headers)
+                    elif fltr['fes'] == 'equals':
+                        temporal.append("""
+                            begin_time = end_time
+                        AND
+                            begin_time = %s::timestamp with time zone
+                        """)
+                        params.append(fltr['instant'])
+
+                    where.append(
+                        "(%s)" % (' OR '.join(temporal))
+                    )
 
         for table in tables.keys():
             off_cols = tables[table]
@@ -539,10 +555,6 @@ temporalFilter:
                     "NULL::double precision",
                     col
                 )
-
-            print('Print col in observations 1')
-            print(cols)
-            print(off_cols)
             uSql = """
                 SELECT
                     end_time, %s
@@ -551,47 +563,55 @@ temporalFilter:
             """ % (
                 ", ".join(cols), table
             )
-            print('hhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+            if len(where) > 0:
+                uSql += "WHERE %s" % (
+                    'AND'.join(where)
+                )
+            unions.append("(%s)" % uSql)
 
-            # uSql = """
-            #     SELECT
-            #         end_time, %s
-            #     FROM
-            #         data.%s
-            # """ % (
-            #     ", ".join(cols), table
-            # )
-            # print('Query Printing uSql')
-            print(uSql)
+        jsonSql = """
+            SELECT array_agg(
+                ARRAY[
+                    to_char(end_time, 'YYYY-MM-DD"T"HH24:MI:SSZ'),
+                    %s
+                ]
+            )
+            FROM
+        """ % (
+            ", ".join(jsonKeys),
+        )
 
-            print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhertrbbbbbbbbbbbbbbbet')
-        # istsos.debug(
-        #     (
-        #         yield from cur.mogrify(uSql, tuple(params*len(unions)))
-        #     ).decode("utf-8")
-        # )        
-        # istsos.debug(
-        #     (
-        #         yield from cur.mogrify(sql, tuple(params*2))
-        #     ).decode("utf-8")
-        # )
+        sql = """
+            SET enable_seqscan=false;
+            SET SESSION TIME ZONE '+00:00';
+            %s
+            (
+                SELECT end_time, %s
+                FROM (
+                    %s
+                ) a
+                GROUP BY end_time
+                ORDER BY end_time
+            ) b
+        """ % (
+            jsonSql,
+            unionSelect,
+            " UNION ".join(unions)
+        )
 
-        # print("Observation.py")
-        # print(sql)
-        sql="SELECT _9 as c0 FROM data._belin"
-        yield from cur.execute(sql, { "type": "array" })
-        print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhertredsfsdfggggggggggggggggggggggt')
+        istsos.debug(
+            (
+                yield from cur.mogrify(sql, tuple(params*len(unions)))
+            ).decode("utf-8")
+        )
+
+        yield from cur.execute(sql, tuple(params*len(unions)))
         rec = yield from cur.fetchone()
-        print('rec1')
-        print(rec)
-        request['observations'] = []
-        # request['headers'] = headers
-        # dbmanager1 = yield from self.init_connection()
-        # cur1 = dbmanager1.cur
-        # yield from cur1.execute(uSql)
-        # rec1 = yield from cur1.fetchone()
+        request['observations'] = rec[0]
+        request['headers'] = headers
         # recs = yield from cur.fetchall()
         istsos.debug("Data is fetched!")
+
 
     @asyncio.coroutine
     def __get_kvp(self, offerings, request):
