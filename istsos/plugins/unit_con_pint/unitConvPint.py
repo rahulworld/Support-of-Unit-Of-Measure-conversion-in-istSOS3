@@ -201,17 +201,21 @@ class UnitConvPint(CompositeAction):
 
     @asyncio.coroutine
     def after(self, request):
-        from_unit=request['json']['data']['from_unit']
+        # from_unit=request['json']['data']['from_unit']
+        from_unit=request['offerings'][0]['observable_properties'][0]['uom']
+        from_unit=yield from self.findLookUp(from_unit)
         # to_unit=request['json']['data']['to_unit']
         ConvertUnit=[]
         to_unit=''
-        if request.get_filter("to_unit") is not None:
-            to_unit=request.get_filter("to_unit")
+        if request.get_filter("in_unit") is not None:
+            to_unit=request.get_filter("in_unit")
+            to_unit=yield from self.findLookUp(to_unit)
             # time=request['json']['headers'][0]['column']
             # value=request['json']['headers'][1]['name']
             # from_unit=request['headers'][1]['uom']
             # to_unit=request['json']['to']
             # print(request['observations'])
+
             recs=request['observations'].copy()
             for rec in recs:
                 # change=rec[1]*ureg.kilometers
@@ -253,3 +257,11 @@ class UnitConvPint(CompositeAction):
                     "headers": request['headers']
                 })
             )
+
+
+    @asyncio.coroutine
+    def findLookUp(self, unit):
+        for key, value in lookups.items():
+            if str(unit).lower() in (n.lower() for n in value):
+                return key
+        return(unit)
