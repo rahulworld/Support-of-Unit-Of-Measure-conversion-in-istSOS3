@@ -212,51 +212,153 @@ class UnitConvPint(CompositeAction):
         # from_unit=request['json']['data']['from_unit']
         from_unit=request['offerings'][0]['observable_properties'][0]['uom']
         from_unit=yield from self.findLookUp(from_unit)
+        # from_unit="degK"
         # to_unit=request['json']['data']['to_unit']
         ConvertUnit=[]
-        to_unit=''
+        To_unit=''
         if request.get_filter("in_unit") is not None:
-            to_unit=request.get_filter("in_unit")
-            to_unit=yield from self.findLookUp(to_unit)
-            # time=request['json']['headers'][0]['column']
-            # value=request['json']['headers'][1]['name']
-            # from_unit=request['headers'][1]['uom']
-            # to_unit=request['json']['to']
-            # print(request['observations'])
-
+            To_unit=request.get_filter("in_unit")
+            To_unit=yield from self.findLookUp(To_unit)
             recs=request['observations'].copy()
-            for rec in recs:
-                # change=rec[1]*ureg.kilometers
-                # change1=change.to(ureg.meter)
-                # change2=change1.magnitude
-                change=str(rec[1])+"*"+from_unit+"to"+to_unit
-                # change=Q_(str(rec[1]), ureg.degC).to(ureg.kelvin)
-                # change=str(rec[1])+"*degC"+"to"+"degF"
-                # change=str(rec[1])+"*ureg.degC"+"to"+"ureg.degF"
-                # change=rec[1]*ureg.degC
-                # change=str(rec[1])+"* kelvin to degF"
-                src, dst = change.split('to')
-                change1=Q_(src).to(dst)
-                # home = Q_(rec[1], ureg.degC)
-                # change1=home.to('degF')
-                # change1=Q_(rec[1], ureg.degC).to(ureg.kelvin).magnitude
-                change2=change1.magnitude
-                # print(change2)
-                # print(change1)
-                ConvertUnit.append({
-                    "datetime" : rec[0],
-                    "value": change2
-                })
-                # request['observations1'].append({
-                #     "timestamp": str(rec[0]),
-                #     "rainfall": change2
-                # })
+            if request.get_filter("operation") is not None:
+                if 'unit' in request.get_filter("operation"):
+                    unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                    if 'qty' in request.get_filter("operation"):
+                        qty=request.get_filter("operation")['qty']
+                        if 'type' in request.get_filter("operation"):
+                            if request.get_filter("operation")['type']=='add':
+                                add=qty
+                                if qty=='':
+                                    add=0
+                                for rec in recs:
+                                    change=str(rec[1])+"*"+from_unit+"add"+str(add)+"*"+unit
+                                    src, dst = change.split('add')
+                                    change1=Q_(src)+Q_(dst)
+                                    change1=Q_(change1).to(To_unit)
+                                    change2=change1.magnitude
+                                    ConvertUnit.append([rec[0],str(change2)])
+                                conversion_uom=To_unit
+                            elif request.get_filter("operation")['type']=='sub':
+                                sub=qty
+                                if qty=='':
+                                    sub=0
+                                for rec in recs:
+                                    change=str(rec[1])+"*"+from_unit+"sub"+str(sub)+"*"+unit
+                                    src, dst = change.split('sub')
+                                    change1=Q_(src)-Q_(dst)
+                                    change1=Q_(change1).to(To_unit)
+                                    change2=change1.magnitude
+                                    ConvertUnit.append([rec[0],str(change2)])
+                                conversion_uom=To_unit
+                            elif request.get_filter("operation")['type']=='mul':
+                                mul=qty
+                                if qty=='':
+                                    mul=1
+                                for rec in recs:
+                                    change=str(rec[1])+"*"+from_unit+"mul"+str(mul)+"*"+unit
+                                    src, dst = change.split('mul')
+                                    change1=Q_(src)*Q_(dst)
+                                    conversion_uom="""%s*%s"""%(To_unit,unit)
+                                    change1=Q_(change1).to(conversion_uom)
+                                    change2=change1.magnitude
+                                    ConvertUnit.append([rec[0],str(change2)])
+                            elif request.get_filter("operation")['type']=='div':
+                                mul=qty
+                                if qty=='':
+                                    mul=1
+                                for rec in recs:
+                                    change=str(rec[1])+"*"+from_unit+"mul"+str(mul)+"*"+unit
+                                    src, dst = change.split('mul')
+                                    change1=Q_(src)/Q_(dst)
+                                    conversion_uom="""%s/%s"""%(To_unit,unit)
+                                    change1=Q_(change1).to(conversion_uom)
+                                    change2=change1.magnitude
+                                    ConvertUnit.append([rec[0],str(change2)])
+                else:
+                    if 'qty' in request.get_filter("operation"):
+                        qty=request.get_filter("operation")['qty']
+                        if 'type' in request.get_filter("operation"):
+                            if request.get_filter("operation")['type']=='add':
+                                add=qty
+                                if qty=='':
+                                    add=0
+                                for rec in recs:
+                                    change=str(rec[1])+"*"+from_unit+"add"+str(add)+"*"+from_unit
+                                    src, dst = change.split('add')
+                                    change1=Q_(src)+Q_(dst)
+                                    change1=Q_(change1).to(To_unit)
+                                    change2=change1.magnitude
+                                    ConvertUnit.append([rec[0],str(change2)])
+                                conversion_uom=To_unit
+                            elif request.get_filter("operation")['type']=='sub':
+                                sub=qty
+                                if qty=='':
+                                    sub=0
+                                for rec in recs:
+                                    change=str(rec[1])+"*"+from_unit+"sub"+str(sub)+"*"+from_unit
+                                    src, dst = change.split('sub')
+                                    change1=Q_(src)-Q_(dst)
+                                    change1=Q_(change1).to(To_unit)
+                                    change2=change1.magnitude
+                                    ConvertUnit.append([rec[0],str(change2)])
+                                conversion_uom=To_unit
+                            elif request.get_filter("operation")['type']=='mul':
+                                mul=qty
+                                if qty=='':
+                                    mul=1
+                                for rec in recs:
+                                    change=str(rec[1])+"*"+from_unit+"mul"+str(mul)+"*"+from_unit
+                                    src, dst = change.split('mul')
+                                    change1=Q_(src)*Q_(dst)
+                                    conversion_uom="""%s*%s"""%(To_unit,from_unit)
+                                    change1=Q_(change1).to(conversion_uom)
+                                    change2=change1.magnitude
+                                    ConvertUnit.append([rec[0],str(change2)])
+                            elif request.get_filter("operation")['type']=='div':
+                                mul=qty
+                                if qty=='':
+                                    mul=1
+                                for rec in recs:
+                                    change=str(rec[1])+"*"+from_unit+"mul"+str(mul)+"*"+from_unit
+                                    src, dst = change.split('mul')
+                                    change1=Q_(src)/Q_(dst)
+                                    conversion_uom="""%s/%s"""%(To_unit,from_unit)
+                                    change1=Q_(change1).to(conversion_uom)
+                                    change2=change1.magnitude
+                                    ConvertUnit.append([rec[0],str(change2)])
+            else:
+                for rec in recs:
+                    change=str(rec[1])+"*"+from_unit+"to"+To_unit
+                    src, dst = change.split('to')
+                    change1=Q_(src).to(dst)
+                    change2=change1.magnitude
+                    ConvertUnit.append([rec[0],str(change2)])
+                    conversion_uom=To_unit
+            # for rec in recs:
+            #     # change=rec[1]*ureg.kilometers
+            #     # change1=change.to(ureg.meter)
+            #     # change2=change1.magnitude
+            #     change=str(rec[1])+"*"+from_unit+"to"+to_unit
+            #     # change=Q_(str(rec[1]), ureg.degC).to(ureg.kelvin)
+            #     # change=str(rec[1])+"*degC"+"to"+"degF"
+            #     # change=str(rec[1])+"*ureg.degC"+"to"+"ureg.degF"
+            #     # change=rec[1]*ureg.degC
+            #     # change=str(rec[1])+"* kelvin to degF"
+            #     src, dst = change.split('to')
+            #     change1=Q_(src).to(dst)
+            #     # home = Q_(rec[1], ureg.degC)
+            #     # change1=home.to('degF')
+            #     # change1=Q_(rec[1], ureg.degC).to(ureg.kelvin).magnitude
+            #     change2=change1.magnitude
+            #     # print(change2)
+            #     # print(change1)
+            #     ConvertUnit.append([rec[0],str(change2)])
             headers.append({
                 "type": request["headers"][1]["type"],
                 "name": request["headers"][1]["name"],
                 "definition": request["headers"][1]["definition"],
                 "offering": request["headers"][1]["offering"],
-                "uom": to_unit
+                "uom": conversion_uom
             })
             request['response'] = Response(
                 json_source=Response.get_template({
@@ -264,7 +366,7 @@ class UnitConvPint(CompositeAction):
                     "headers": headers
                 })
             )
-            yield from self.__download_csv_from_json(request, ConvertUnit, headers )
+            yield from self.__download_file(request, ConvertUnit, headers )
         else:
             # print('nothing happened')
             request['response'] = Response(
@@ -307,5 +409,27 @@ class UnitConvPint(CompositeAction):
                     count += 1
                 csvwriter.writerow(obj.values())
 
+            debug_detail = """%s.csv download location is %s""" % (file_name, download_location)
+            istsos.debug(debug_detail)
+
+    @asyncio.coroutine
+    def __download_file(self, request, data, headers=None):
+        if request.get_filter("download_file") is not None:
+            if 'file_name' in request.get_filter("download_file"):
+                file_name=request.get_filter("download_file")['file_name']
+            else:
+                file_name=request.get_filter("offerings")
+
+            if 'location' in request.get_filter("download_file"):
+                download_location=request.get_filter("download_file")['location']
+            else:
+                download_location='istsos/plugins/unit_con_pint/download_file/'
+
+            file_detail = """%s%s.csv""" % (download_location, file_name)
+            f = csv.writer(open(file_detail, "w"))
+            if headers is not None:
+                f.writerow(headers)
+            for x in data:
+                f.writerow(x)
             debug_detail = """%s.csv download location is %s""" % (file_name, download_location)
             istsos.debug(debug_detail)
