@@ -211,8 +211,8 @@ class UnitConvPint(CompositeAction):
         }]
         # from_unit=request['json']['data']['from_unit']
         from_unit=request['offerings'][0]['observable_properties'][0]['uom']
-        from_unit=yield from self.findLookUp(from_unit)
-        # from_unit="degK"
+        # from_unit=yield from self.findLookUp(from_unit)
+        from_unit="degK"
         # to_unit=request['json']['data']['to_unit']
         ConvertUnit=[]
         To_unit=''
