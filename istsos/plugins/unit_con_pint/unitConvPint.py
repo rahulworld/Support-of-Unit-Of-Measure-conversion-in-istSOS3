@@ -163,6 +163,9 @@ lookups = {
      }
 
 import asyncio
+import json
+import csv
+import istsos
 from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
 from pint import UnitRegistry, set_application_registry
@@ -201,6 +204,11 @@ class UnitConvPint(CompositeAction):
 
     @asyncio.coroutine
     def after(self, request):
+        headers = [{
+            "type": "datetime",
+            "name": "Phenomenon Time",
+            "column": "e"
+        }]
         # from_unit=request['json']['data']['from_unit']
         from_unit=request['offerings'][0]['observable_properties'][0]['uom']
         from_unit=yield from self.findLookUp(from_unit)
@@ -243,12 +251,20 @@ class UnitConvPint(CompositeAction):
                 #     "timestamp": str(rec[0]),
                 #     "rainfall": change2
                 # })
+            headers.append({
+                "type": request["headers"][1]["type"],
+                "name": request["headers"][1]["name"],
+                "definition": request["headers"][1]["definition"],
+                "offering": request["headers"][1]["offering"],
+                "uom": to_unit
+            })
             request['response'] = Response(
                 json_source=Response.get_template({
                     "data": ConvertUnit,
-                    "headers": request['headers']
+                    "headers": headers
                 })
             )
+            yield from self.__download_csv_from_json(request, ConvertUnit, headers )
         else:
             # print('nothing happened')
             request['response'] = Response(
@@ -265,3 +281,31 @@ class UnitConvPint(CompositeAction):
             if str(unit).lower() in (n.lower() for n in value):
                 return key
         return(unit)
+
+    @asyncio.coroutine
+    def __download_csv_from_json(self, request, data, headers=None):
+        if request.get_filter("download_file") is not None:
+            if 'file_name' in request.get_filter("download_file"):
+                file_name=request.get_filter("download_file")['file_name']
+            else:
+                file_name=request.get_filter("offerings")
+
+            if 'location' in request.get_filter("download_file"):
+                download_location=request.get_filter("download_file")['location']
+            else:
+                download_location='istsos/plugins/unit_con_pint/download_file/'
+
+            file_detail = """%s%s.csv""" % (download_location, file_name)
+            csvwriter = csv.writer(open(file_detail, "w"))
+            if headers is not None:
+                csvwriter.writerow(headers)
+            count = 0
+            for obj in data:
+                if count == 0:
+                    header = obj.keys()
+                    csvwriter.writerow(header)
+                    count += 1
+                csvwriter.writerow(obj.values())
+
+            debug_detail = """%s.csv download location is %s""" % (file_name, download_location)
+            istsos.debug(debug_detail)
