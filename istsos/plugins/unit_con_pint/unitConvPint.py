@@ -231,9 +231,18 @@ class UnitConvPint(CompositeAction):
                                 if qty=='':
                                     add=0
                                 for rec in recs:
+                                    # if(from_unit=='degC' and unit=='degC'):
+                                    #     change=str(rec[1])+"*degC"+"add"+str(add)+"*delta_degC"
+                                    # elif(from_unit=='degC'):
+                                    #     change=str(rec[1])+"*degC"+"add"+str(add)+"*"+unit
+                                    #     change1=Q_(src)+Q_(dst).to('delta_degC')
+                                    # elif(unit=='degC'):
+                                    #     change=str(rec[1])+"*"+from_unit+"add"+str(add)+"*delta_degC"
+                                    # else:
+                                    #     change=str(rec[1])+"*"+from_unit+"add"+str(add)+"*"+unit
                                     change=str(rec[1])+"*"+from_unit+"add"+str(add)+"*"+unit
                                     src, dst = change.split('add')
-                                    change1=Q_(src)+Q_(dst)
+                                    change1=Q_(src)+Q_(dst).to('delta_degC')
                                     change1=Q_(change1).to(To_unit)
                                     change2=change1.magnitude
                                     ConvertUnit.append([rec[0],str(change2)])
@@ -285,7 +294,7 @@ class UnitConvPint(CompositeAction):
                                 for rec in recs:
                                     change=str(rec[1])+"*"+from_unit+"add"+str(add)+"*"+from_unit
                                     src, dst = change.split('add')
-                                    change1=Q_(src)+Q_(dst)
+                                    change1=Q_(src)+Q_(dst).to('delta_degC')
                                     change1=Q_(change1).to(To_unit)
                                     change2=change1.magnitude
                                     ConvertUnit.append([rec[0],str(change2)])
