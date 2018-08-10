@@ -14,29 +14,28 @@ class UnitConversionPo_sql_unit(CompositeAction):
     @asyncio.coroutine
     def process(self, request):
         """
-        Request example: {
-            "action": "UNIT_CON_POST",
-            "data": {
-                "offerings": ["belin","belin"],
-                "observedProperties": [
-                    "urn:ogc:def:parameter:x-istsos:1.0:temperature"
-                ],
-                "temporal": {
-                    "reference": "om:phenomenonTime",
-                    "fes": "during",
-                    "period": [
-                        "2015-05-03T16:30:00.000000+0200",
-                        "2015-06-03T16:30:00.000000+0200"
-                    ]
-                },
-                "responseFormat": "application/json;subtype='array'"
-            },
-            "in_unit":"°F"
-        }
+            Request example: {
+            "action": "UNIT_CONVERSION_USING_POSTGRESQL_UNIT",
+                "data": {
+                    "offerings": ["belin"],
+                    "observedProperties": [
+                        "urn:ogc:def:parameter:x-istsos:1.0:temperature"
+                    ],
+                    "download_file": {
+                        "file_name": "testing3",
+                        "location": "istsos/plugins/unit_con_post/download_file/"
+                    },
+                    "in_unit":"degC",
+                    "operation": {
+                        "type":"add",
+                        "qty": "3",
+                        "unit": "degF"
+                    },
+                    "responseFormat": "application/json;subtype='array'"
+                }
+            }
         """
         # Add filters
-        print('Unit Conversion PostgreSQL unit called')
-        print(request.get_rest_data())
         request.set_filter(request.get_rest_data())
         # Adding action Offering retriever
         yield from self.add_retriever_unit_conversion('Offerings')
@@ -86,30 +85,3 @@ def __get_plugin_proxy(istsos_package, action_module, **kwargs):
     if kwargs is not None:
         return m(**kwargs)
     return m()
-
-# @asyncio.coroutine
-# def __get_plugin_proxy(istsos_package, action_module, **kwargs):
-#     from istsos import setting
-#     import importlib
-#     state = yield from setting.get_state()
-#     fileName = action_module[0].lower() + action_module[1:]
-#     module = 'istsos.%s.%s.%s' % (
-#         istsos_package,
-#         state.config["loader"]["type"],
-#         fileName
-#     )
-
-#     istsos.debug("Importing %s.%s" % (module, action_module))
-#     try:
-#         m = importlib.import_module(module)
-#     except Exception:
-#         module = 'istsos.%s.%s' % (
-#             istsos_package,
-#             fileName
-#         )
-#         m = importlib.import_module(module)
-
-#     m = getattr(m, action_module)
-#     if kwargs is not None:
-#         return m(**kwargs)
-#     return m()

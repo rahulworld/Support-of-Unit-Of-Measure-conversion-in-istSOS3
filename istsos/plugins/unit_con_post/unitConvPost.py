@@ -8,25 +8,26 @@ class UnitConvPost(CompositeAction):
     @asyncio.coroutine
     def before(self, request):
         """
-        Request example: {
-            "action": "UNIT_CON_POST",
-            "data": {
-                "offerings": ["belin","belin"],
-                "observedProperties": [
-                    "urn:ogc:def:parameter:x-istsos:1.0:temperature"
-                ],
-                "temporal": {
-                    "reference": "om:phenomenonTime",
-                    "fes": "during",
-                    "period": [
-                        "2015-05-03T16:30:00.000000+0200",
-                        "2015-06-03T16:30:00.000000+0200"
-                    ]
-                },
-                "responseFormat": "application/json;subtype='array'"
-            },
-            "in_unit":"°F"
-        }
+            Request example: {
+            "action": "UNIT_CONVERSION_USING_POSTGRESQL_UNIT",
+                "data": {
+                    "offerings": ["belin"],
+                    "observedProperties": [
+                        "urn:ogc:def:parameter:x-istsos:1.0:temperature"
+                    ],
+                    "download_file": {
+                        "file_name": "testing3",
+                        "location": "istsos/plugins/unit_con_post/download_file/"
+                    },
+                    "in_unit":"degC",
+                    "operation": {
+                        "type":"add",
+                        "qty": "3",
+                        "unit": "degF"
+                    },
+                    "responseFormat": "application/json;subtype='array'"
+                }
+            }
         """
         yield from self.add_plugin("unit_con_post", "UnitConversionPo_sql_unit")
 
