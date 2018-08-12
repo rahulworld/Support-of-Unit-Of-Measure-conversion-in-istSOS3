@@ -52,7 +52,7 @@ Pint is a `Python package` to define, operate and manipulate physical quantities
 
 [forked github Repo.](https://github.com/rahulworld/istsos3)
 
-[Support of Unit Of Measure conversion in istSOS3](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commits/master)
+[Testing github Repo.](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commits/master)
 
 ### Support of Unit Of Measure conversion in istSOS3
 
