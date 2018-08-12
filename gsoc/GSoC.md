@@ -5,8 +5,6 @@
 
 ## Summary
 
-The primary goal of my project was to create `OAT(Data analysis and statistics)` extension in RESTFull Web api and `OAT extension` having data analysis and statistical tools for `istSOS` which is be used to automate the creation of statisticate documents using OAT library and harvesting the data from an istSOS server.
-
 The aim of my project primarily is to add `plugins` conversion of the unit of measure in istSOS3. The user can convert unit in another specified unit. For Unit of measure conversion in `istSOS3` we added `postgresql-unit` and `pint` libraries which has a powerful feature of unit conversion along with many specified functions like `unit conversion` function instantly and all types operations supports to istsos3 data like `add`, `subtraction`, `multiplication` and `division` with `magnitude` and `units`.
 
 
@@ -39,15 +37,12 @@ Pint is a `Python package` to define, operate and manipulate physical quantities
 
 
 # Challenges
-1. Understanding istSOS structure and OAT package
-2. Working with extjs tools in a concurrent environment.
-3. Developing consistent suits.
+1. Understanding istSOS3 structure, postgresql-unit and pint.
+2. Working with unit conversion tools in a concurrent environment.
+3. Developing consistent plugins.
 
 # Scope for future improvements
-1. fuctionality add sensor through (CSV, istSOS, Raw)data in `Add sensor name` GUI in `OAT extenstion`.
-![Add sensor name](images/addSensorName.png)
-2. fuctionality add in `Mangae sensor`.
-3. functionalty add in `Compare sensor`.
+1. Need Modularity for every unit operations and improvement in exceptional units conversion.
 
 # Commits
 
@@ -57,49 +52,37 @@ Pint is a `Python package` to define, operate and manipulate physical quantities
 
 [forked github Repo.](https://github.com/rahulworld/istsos3)
 
-[Data analysis and statistics tools suit commits](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commits/master)
+[Support of Unit Of Measure conversion in istSOS3](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commits/master)
 
 ### Support of Unit Of Measure conversion in istSOS3
 
-[Updated OAT methods](https://github.com/rahulworld/Data-analysis/commit/8ab10fbb74331fe5ad85237e14996a2b207be79d)
+[Fixing bug in pint temprature addition](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/d5461f4d2da3c6b897a6fe4bfc37faf6504094de)
 
-[Added multiple y-axis in Dygraph](https://github.com/rahulworld/Data-analysis/commit/d6b25967fd46c4c7c4f371376089f8d9f212d0a0)
+[added download in pint](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/cf30cbc83fbf0faeff259349fec47388e1decab3)
 
-[Added download result](https://github.com/rahulworld/Data-analysis/commit/dfa2c7e131c3b1a899ddd1a25291fe2e9c5a339d)
+[Added operation in pint](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/997f007a5dff5d57b51b6f463b4d9c61a7112a43)
 
-[Added tabulation](https://github.com/rahulworld/Data-analysis/commit/bd434114a6c6bf66031de56d067f00e09fa41ff1)
+[Added downlaod file with postgresql-unit](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/3be4ff154f8c53fbf0f90383c6317cedec6648cc)
 
-[Added usage of period](https://github.com/rahulworld/Data-analysis/commit/c61b096af2f8dc12257caa0d20279584e1dffbf0)
+[Added lookup table in postgresql plugin](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/7c5157ef8a38becc26553ed1a8acda4eb3f89ef6)
 
-[Added usage of time](https://github.com/rahulworld/Data-analysis/commit/d3ba63b7ab9fd7011b66903c85b4dcf2af723b41)
+[Added operations in postgresql plugin](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/9c4d1840c8dff6e17307990e25bb6412db3187fe)
 
-[Added hargreaves oat method](https://github.com/rahulworld/Data-analysis/commit/2972711b9db4ed50d840cb7862bcd4743b804683)
+[Fixing ambigous issue in pint](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/0c449859be1844ce847b96d0d28637dea8b2b68a)
 
-[Added data_values oat method](https://github.com/rahulworld/Data-analysis/commit/a681def7a961d243e4bcef6d8634c81d21a47eb5)
+[Added lookup table](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/f119d901902f0212300f842271e43d6f6901e2db)
 
-[Added quality oat method](https://github.com/rahulworld/Data-analysis/commit/655069f461243cfd96774bc1cd85ad8192867d02)
+[Fixing error postgresql-unit conversion](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/d79a3680c88dd7f7bd75b76912b4b9ef3ad47420)
 
-[Added fill oat method](https://github.com/rahulworld/Data-analysis/commit/15bf91e0a7a7338813fed5f014125b6b4ac583da)
+[Added unit coversion in all formats array, array2, vega and defualt data for post plugins](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/b3170f1d1a59a1a5ca41545ff2318a449d07333c)
 
-[Added statistics oat method](https://github.com/rahulworld/Data-analysis/commit/8e380f6f0b1acf38ac85beeea8ed97cf696fe610)
+[Added units in plugins](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/9c4d1840c8dff6e17307990e25bb6412db3187fe)
 
-[Added hydro_indicies oat method](https://github.com/rahulworld/Data-analysis/commit/8f8795257dbc399d93ad1eb20f7d3c60c41f9319)
+[Added units in lookup](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/11f032bfabfb49facefbd67f447912a8a116cf83)
 
-[Added intgrate oat method](https://github.com/rahulworld/Data-analysis/commit/ccf52ee83a4cc445c5774c3599f7e36cc38a170e)
+[Added units in lookup in pint plugin](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/4cbea439693ba60156a0a5d4139163d72d4a5cc0)
 
-[Added hydro_events oat method](https://github.com/rahulworld/Data-analysis/commit/2b7b36ea0efe0d22b02c95b19e33826982bf545a)
-
-[Added hydro_separation oat method](https://github.com/rahulworld/Data-analysis/commit/4a347d800660ccd612f8493ce2f38b14491ae286)
-
-[Added exeedance oat method](https://github.com/rahulworld/Data-analysis/commit/dde68648c26928d27d728a793ffd8cf946adfddd)
-
-[Added resample oat method](https://github.com/rahulworld/Data-analysis/commit/1083c47c0ded0e7aaf285ea14041ae194b72aa27)
-
-[Added some OAT methods GUI](https://github.com/rahulworld/Data-analysis/commit/7096bc88ceb2ab493ce915f6420b8855cfcfba43)
-
-[Added page Add Sensor GUI](https://github.com/rahulworld/Data-analysis/commit/48173aa5ed562987bc5d0dee429bb060845181a0)
-
-[Added page Process time series GUI](https://github.com/rahulworld/Data-analysis/commit/b9269e911eab22a36dbfffc653abb7efcbebbba8)
+[Added lookup](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commit/cf30cbc83fbf0faeff259349fec47388e1decab3)
 
 ##Other Links
 * [documentation](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/wiki/Wiki)
