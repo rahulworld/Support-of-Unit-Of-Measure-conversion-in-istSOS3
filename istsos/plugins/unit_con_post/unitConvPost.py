@@ -1,4 +1,5 @@
 import asyncio
+from istsos import setting
 from istsos.entity.rest.response import Response
 from istsos.actions.action import CompositeAction
 

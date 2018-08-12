@@ -147,7 +147,7 @@ temporalFilter:
         op_filter = request.get_filter('observedProperties')
         tables = {}
         columns = []
-        ConvertUnit=''
+        from_uom=''
         conversion_uom=''
         headers = [{
             "type": "datetime",
@@ -171,7 +171,7 @@ temporalFilter:
                         columns.append(op['column'])
                         # columns_qi.append('%s_qi' % op['column'])
                         tables[tName].append(op['column'])
-                        ConvertUnit=op['uom']
+                        from_uom=op['uom']
                         headers.append({
                             "type": "number",
                             "name": op['name'],
@@ -193,7 +193,7 @@ temporalFilter:
                     columns.append(op['column'])
                     # columns_qi.append('%s_qi' % op['column'])
                     tables[tName].append(op['column'])
-                    ConvertUnit=yield from self.findLookUp(op['uom'])
+                    from_uom=yield from self.findLookUp(op['uom'])
                     headers.append({
                         "type": "number",
                         "name": op['name'],
@@ -253,111 +253,124 @@ temporalFilter:
             off_cols = tables[table]
             cols = unionColumns.copy()
             for col in off_cols:
-                convert_unit=''
+                conversion_query = ''
                 if request.get_filter("in_unit") is not None:
-                    To_unit=yield from self.findLookUp(request.get_filter("in_unit"))
+                    to_unit = yield from self.findLookUp(request.get_filter("in_unit"))
                     if request.get_filter("operation") is not None:
                         if 'unit' in request.get_filter("operation"):
-                            unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                            unit = yield from self.findLookUp(request.get_filter("operation")['unit'])
                             if 'qty' in request.get_filter("operation"):
-                                qty=request.get_filter("operation")['qty']
+                                qty = request.get_filter("operation")['qty']
                                 if 'type' in request.get_filter("operation"):
-                                    if request.get_filter("operation")['type']=='add':
-                                        add=qty
-                                        if qty=='':
-                                            add=0
-                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='sub':
-                                        sub=qty
-                                        if qty=='':
-                                            sub=0
-                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='mul':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
-                                        conversion_uom=""" %s*%s """%(To_unit,unit)
-                                    elif request.get_filter("operation")['type']=='div':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
-                                        conversion_uom=""" %s/%s """%(To_unit,unit)
+                                    if request.get_filter("operation")['type'] == 'add':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'sub':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'mul':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, unit, to_unit, unit)
+                                        conversion_uom = """ %s*%s """%(to_unit,unit)
+                                    elif request.get_filter("operation")['type'] == 'div':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, unit, to_unit, unit)
+                                        conversion_uom = """ %s/%s """%(to_unit,unit)
                         else:
                             if 'qty' in request.get_filter("operation"):
-                                qty=request.get_filter("operation")['qty']
+                                qty = request.get_filter("operation")['qty']
                                 if 'type' in request.get_filter("operation"):
-                                    if request.get_filter("operation")['type']=='add':
-                                        add=qty
-                                        if qty=='':
-                                            add=0
-                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, ConvertUnit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='sub':
-                                        sub=qty
-                                        if qty=='':
-                                            sub=0
-                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, ConvertUnit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='mul':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
-                                        conversion_uom=""" %s*%s """%(To_unit,To_unit)
-                                    elif request.get_filter("operation")['type']=='div':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
-                                        conversion_uom=""" %s/%s """%(To_unit,To_unit)
+                                    if request.get_filter("operation")['type'] == 'add':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'sub':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'mul':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, from_uom, to_unit, to_unit)
+                                        conversion_uom = """ %s*%s """%(to_unit,to_unit)
+                                    elif request.get_filter("operation")['type'] == 'div':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, from_uom, to_unit, to_unit)
+                                        conversion_uom = """ %s/%s """%(to_unit,to_unit)
                     else:
-                        convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col, ConvertUnit, To_unit)
-                        conversion_uom=To_unit
+                        conversion_query = """(%s::text||'%s')::unit@@'%s' """%(col, from_uom, to_unit)
+                        conversion_uom = to_unit
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
                         "NULL::double precision",
-                        convert_unit
+                        conversion_query
                     )
                 elif request.get_filter("operation") is not None:
                     if 'unit' in request.get_filter("operation"):
-                        unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                        unit = yield from self.findLookUp(request.get_filter("operation")['unit'])
                         if 'qty' in request.get_filter("operation"):
-                            qty=request.get_filter("operation")['qty']
+                            qty = request.get_filter("operation")['qty']
                             if 'type' in request.get_filter("operation"):
-                                if request.get_filter("operation")['type']=='add':
-                                    add=qty
-                                    if qty=='':
-                                        add=0
-                                    convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, ConvertUnit)
-                                    conversion_uom=ConvertUnit
-                                elif request.get_filter("operation")['type']=='sub':
-                                    sub=qty
-                                    if qty=='':
-                                        sub=0
-                                    convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, ConvertUnit)
-                                    conversion_uom=ConvertUnit
-                                elif request.get_filter("operation")['type']=='mul':
-                                    mul=qty
-                                    if qty=='':
-                                        mul=1
-                                    convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
-                                    conversion_uom=""" %s*%s """%(ConvertUnit,unit)
-                                elif request.get_filter("operation")['type']=='div':
-                                    mul=qty
-                                    if qty=='':
-                                        mul=1
-                                    convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
-                                    conversion_uom=""" %s/%s """%(ConvertUnit,unit)
+                                if request.get_filter("operation")['type'] == 'add':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'sub':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'mul':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, unit, from_uom, unit)
+                                    conversion_uom = """ %s*%s """%(from_uom,unit)
+                                elif request.get_filter("operation")['type'] == 'div':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, unit, from_uom, unit)
+                                    conversion_uom = """ %s/%s """%(from_uom,unit)
+                    else:
+                        if 'qty' in request.get_filter("operation"):
+                            qty = request.get_filter("operation")['qty']
+                            if 'type' in request.get_filter("operation"):
+                                if request.get_filter("operation")['type'] == 'add':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'sub':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'mul':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, from_uom, from_uom, from_uom)
+                                    conversion_uom = """ %s*%s """%(from_uom,from_uom)
+                                elif request.get_filter("operation")['type'] == 'div':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, from_uom, from_uom, from_uom)
+                                    conversion_uom = """ %s/%s """%(from_uom,from_uom)
+
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
                         "NULL::double precision",
-                        convert_unit
+                        conversion_query
                     )
                 else:
                     cols[
@@ -375,6 +388,7 @@ temporalFilter:
             """ % (
                 ", ".join(cols), table
             )
+
             if len(where) > 0:
                 uSql += "WHERE %s" % (
                     'AND'.join(where)
@@ -440,7 +454,7 @@ temporalFilter:
     @asyncio.coroutine
     def __get_array(self, offerings, request):
         conversion_uom=''
-        ConvertUnit=''
+        from_uom=''
         dbmanager = yield from self.init_connection()
         cur = dbmanager.cur
         op_filter = request.get_filter('observedProperties')
@@ -468,7 +482,7 @@ temporalFilter:
                         columns.append(op['column'])
                         # columns_qi.append('%s_qi' % op['column'])
                         tables[tName].append(op['column'])
-                        ConvertUnit=yield from self.findLookUp(op['uom'])
+                        from_uom=yield from self.findLookUp(op['uom'])
                         headers.append({
                             "type": "number",
                             "name": op['name'],
@@ -490,7 +504,7 @@ temporalFilter:
                     columns.append(op['column'])
                     # columns_qi.append('%s_qi' % op['column'])
                     tables[tName].append(op['column'])
-                    ConvertUnit=op['uom']
+                    from_uom=op['uom']
                     headers.append({
                         "type": "number",
                         "name": op['name'],
@@ -545,111 +559,124 @@ temporalFilter:
             off_cols = tables[table]
             cols = unionColumns.copy()
             for col in off_cols:
-                convert_unit=''
+                conversion_query = ''
                 if request.get_filter("in_unit") is not None:
-                    To_unit=yield from self.findLookUp(request.get_filter("in_unit"))
+                    to_unit = yield from self.findLookUp(request.get_filter("in_unit"))
                     if request.get_filter("operation") is not None:
                         if 'unit' in request.get_filter("operation"):
-                            unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                            unit = yield from self.findLookUp(request.get_filter("operation")['unit'])
                             if 'qty' in request.get_filter("operation"):
-                                qty=request.get_filter("operation")['qty']
+                                qty = request.get_filter("operation")['qty']
                                 if 'type' in request.get_filter("operation"):
-                                    if request.get_filter("operation")['type']=='add':
-                                        add=qty
-                                        if qty=='':
-                                            add=0
-                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='sub':
-                                        sub=qty
-                                        if qty=='':
-                                            sub=0
-                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='mul':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
-                                        conversion_uom=""" %s*%s """%(To_unit,unit)
-                                    elif request.get_filter("operation")['type']=='div':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
-                                        conversion_uom=""" %s/%s """%(To_unit,unit)
+                                    if request.get_filter("operation")['type'] == 'add':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'sub':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'mul':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, unit, to_unit, unit)
+                                        conversion_uom = """ %s*%s """%(to_unit,unit)
+                                    elif request.get_filter("operation")['type'] == 'div':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, unit, to_unit, unit)
+                                        conversion_uom = """ %s/%s """%(to_unit,unit)
                         else:
                             if 'qty' in request.get_filter("operation"):
-                                qty=request.get_filter("operation")['qty']
+                                qty = request.get_filter("operation")['qty']
                                 if 'type' in request.get_filter("operation"):
-                                    if request.get_filter("operation")['type']=='add':
-                                        add=qty
-                                        if qty=='':
-                                            add=0
-                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, ConvertUnit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='sub':
-                                        sub=qty
-                                        if qty=='':
-                                            sub=0
-                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, ConvertUnit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='mul':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
-                                        conversion_uom=""" %s*%s """%(To_unit,To_unit)
-                                    elif request.get_filter("operation")['type']=='div':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
-                                        conversion_uom=""" %s/%s """%(To_unit,To_unit)
+                                    if request.get_filter("operation")['type'] == 'add':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'sub':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'mul':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, from_uom, to_unit, to_unit)
+                                        conversion_uom = """ %s*%s """%(to_unit,to_unit)
+                                    elif request.get_filter("operation")['type'] == 'div':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, from_uom, to_unit, to_unit)
+                                        conversion_uom = """ %s/%s """%(to_unit,to_unit)
                     else:
-                        convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col, ConvertUnit, To_unit)
-                        conversion_uom=To_unit
+                        conversion_query = """(%s::text||'%s')::unit@@'%s' """%(col, from_uom, to_unit)
+                        conversion_uom = to_unit
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
                         "NULL::double precision",
-                        convert_unit
+                        conversion_query
                     )
                 elif request.get_filter("operation") is not None:
                     if 'unit' in request.get_filter("operation"):
-                        unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                        unit = yield from self.findLookUp(request.get_filter("operation")['unit'])
                         if 'qty' in request.get_filter("operation"):
-                            qty=request.get_filter("operation")['qty']
+                            qty = request.get_filter("operation")['qty']
                             if 'type' in request.get_filter("operation"):
-                                if request.get_filter("operation")['type']=='add':
-                                    add=qty
-                                    if qty=='':
-                                        add=0
-                                    convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, ConvertUnit)
-                                    conversion_uom=ConvertUnit
-                                elif request.get_filter("operation")['type']=='sub':
-                                    sub=qty
-                                    if qty=='':
-                                        sub=0
-                                    convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, ConvertUnit)
-                                    conversion_uom=ConvertUnit
-                                elif request.get_filter("operation")['type']=='mul':
-                                    mul=qty
-                                    if qty=='':
-                                        mul=1
-                                    convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
-                                    conversion_uom=""" %s*%s """%(ConvertUnit,unit)
-                                elif request.get_filter("operation")['type']=='div':
-                                    mul=qty
-                                    if qty=='':
-                                        mul=1
-                                    convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
-                                    conversion_uom=""" %s/%s """%(ConvertUnit,unit)
+                                if request.get_filter("operation")['type'] == 'add':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'sub':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'mul':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, unit, from_uom, unit)
+                                    conversion_uom = """ %s*%s """%(from_uom,unit)
+                                elif request.get_filter("operation")['type'] == 'div':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, unit, from_uom, unit)
+                                    conversion_uom = """ %s/%s """%(from_uom,unit)
+                    else:
+                        if 'qty' in request.get_filter("operation"):
+                            qty = request.get_filter("operation")['qty']
+                            if 'type' in request.get_filter("operation"):
+                                if request.get_filter("operation")['type'] == 'add':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'sub':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'mul':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, from_uom, from_uom, from_uom)
+                                    conversion_uom = """ %s*%s """%(from_uom,from_uom)
+                                elif request.get_filter("operation")['type'] == 'div':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, from_uom, from_uom, from_uom)
+                                    conversion_uom = """ %s/%s """%(from_uom,from_uom)
+
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
                         "NULL::double precision",
-                        convert_unit
+                        conversion_query
                     )
                 else:
                     cols[
@@ -738,7 +765,7 @@ temporalFilter:
         op_filter = request.get_filter('observedProperties')
         tables = {}
         columns = []
-        ConvertUnit=''
+        from_uom=''
         conversion_uom=''
         headers = [{
             "type": "time",
@@ -761,7 +788,7 @@ temporalFilter:
                         columns.append(op['column'])
                         # columns_qi.append('%s_qi' % op['column'])
                         tables[tName].append(op['column'])
-                        ConvertUnit=op['uom']
+                        from_uom=op['uom']
 
             elif offering.is_array():
                 raise Exception("Not implemented yet")
@@ -776,7 +803,7 @@ temporalFilter:
                     columns.append(op['column'])
                     # columns_qi.append('%s_qi' % op['column'])
                     tables[tName].append(op['column'])
-                    ConvertUnit=op['uom']
+                    from_uom=op['uom']
 
         unions = []
         unionSelect = []
@@ -830,111 +857,124 @@ temporalFilter:
             off_cols = tables[table]
             cols = unionColumns.copy()
             for col in off_cols:
-                convert_unit=''
+                conversion_query = ''
                 if request.get_filter("in_unit") is not None:
-                    To_unit=yield from self.findLookUp(request.get_filter("in_unit"))
+                    to_unit = yield from self.findLookUp(request.get_filter("in_unit"))
                     if request.get_filter("operation") is not None:
                         if 'unit' in request.get_filter("operation"):
-                            unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                            unit = yield from self.findLookUp(request.get_filter("operation")['unit'])
                             if 'qty' in request.get_filter("operation"):
-                                qty=request.get_filter("operation")['qty']
+                                qty = request.get_filter("operation")['qty']
                                 if 'type' in request.get_filter("operation"):
-                                    if request.get_filter("operation")['type']=='add':
-                                        add=qty
-                                        if qty=='':
-                                            add=0
-                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='sub':
-                                        sub=qty
-                                        if qty=='':
-                                            sub=0
-                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='mul':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
-                                        conversion_uom=""" %s*%s """%(To_unit,unit)
-                                    elif request.get_filter("operation")['type']=='div':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, To_unit, unit)
-                                        conversion_uom=""" %s/%s """%(To_unit,unit)
+                                    if request.get_filter("operation")['type'] == 'add':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'sub':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'mul':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, unit, to_unit, unit)
+                                        conversion_uom = """ %s*%s """%(to_unit,unit)
+                                    elif request.get_filter("operation")['type'] == 'div':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, unit, to_unit, unit)
+                                        conversion_uom = """ %s/%s """%(to_unit,unit)
                         else:
                             if 'qty' in request.get_filter("operation"):
-                                qty=request.get_filter("operation")['qty']
+                                qty = request.get_filter("operation")['qty']
                                 if 'type' in request.get_filter("operation"):
-                                    if request.get_filter("operation")['type']=='add':
-                                        add=qty
-                                        if qty=='':
-                                            add=0
-                                        convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, ConvertUnit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='sub':
-                                        sub=qty
-                                        if qty=='':
-                                            sub=0
-                                        convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, ConvertUnit, To_unit)
-                                        conversion_uom=To_unit
-                                    elif request.get_filter("operation")['type']=='mul':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
-                                        conversion_uom=""" %s*%s """%(To_unit,To_unit)
-                                    elif request.get_filter("operation")['type']=='div':
-                                        mul=qty
-                                        if qty=='':
-                                            mul=1
-                                        convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, ConvertUnit, To_unit, To_unit)
-                                        conversion_uom=""" %s/%s """%(To_unit,To_unit)
+                                    if request.get_filter("operation")['type'] == 'add':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'sub':
+                                        if qty == '':
+                                            qty = 0
+                                        conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, to_unit)
+                                        conversion_uom = to_unit
+                                    elif request.get_filter("operation")['type'] == 'mul':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, from_uom, to_unit, to_unit)
+                                        conversion_uom = """ %s*%s """%(to_unit,to_unit)
+                                    elif request.get_filter("operation")['type'] == 'div':
+                                        if qty == '':
+                                            qty = 1
+                                        conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, from_uom, to_unit, to_unit)
+                                        conversion_uom = """ %s/%s """%(to_unit,to_unit)
                     else:
-                        convert_unit="""(%s::text||'%s')::unit@@'%s' """%(col, ConvertUnit, To_unit)
-                        conversion_uom=To_unit
+                        conversion_query = """(%s::text||'%s')::unit@@'%s' """%(col, from_uom, to_unit)
+                        conversion_uom = to_unit
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
                         "NULL::double precision",
-                        convert_unit
+                        conversion_query
                     )
                 elif request.get_filter("operation") is not None:
                     if 'unit' in request.get_filter("operation"):
-                        unit=yield from self.findLookUp(request.get_filter("operation")['unit'])
+                        unit = yield from self.findLookUp(request.get_filter("operation")['unit'])
                         if 'qty' in request.get_filter("operation"):
-                            qty=request.get_filter("operation")['qty']
+                            qty = request.get_filter("operation")['qty']
                             if 'type' in request.get_filter("operation"):
-                                if request.get_filter("operation")['type']=='add':
-                                    add=qty
-                                    if qty=='':
-                                        add=0
-                                    convert_unit="""(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, add, unit, ConvertUnit)
-                                    conversion_uom=ConvertUnit
-                                elif request.get_filter("operation")['type']=='sub':
-                                    sub=qty
-                                    if qty=='':
-                                        sub=0
-                                    convert_unit="""(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, ConvertUnit, sub, unit, ConvertUnit)
-                                    conversion_uom=ConvertUnit
-                                elif request.get_filter("operation")['type']=='mul':
-                                    mul=qty
-                                    if qty=='':
-                                        mul=1
-                                    convert_unit="""(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
-                                    conversion_uom=""" %s*%s """%(ConvertUnit,unit)
-                                elif request.get_filter("operation")['type']=='div':
-                                    mul=qty
-                                    if qty=='':
-                                        mul=1
-                                    convert_unit="""(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, ConvertUnit, mul, unit, ConvertUnit, unit)
-                                    conversion_uom=""" %s/%s """%(ConvertUnit,unit)
+                                if request.get_filter("operation")['type'] == 'add':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'sub':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, unit, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'mul':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, unit, from_uom, unit)
+                                    conversion_uom = """ %s*%s """%(from_uom,unit)
+                                elif request.get_filter("operation")['type'] == 'div':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, unit, from_uom, unit)
+                                    conversion_uom = """ %s/%s """%(from_uom,unit)
+                    else:
+                        if 'qty' in request.get_filter("operation"):
+                            qty = request.get_filter("operation")['qty']
+                            if 'type' in request.get_filter("operation"):
+                                if request.get_filter("operation")['type'] == 'add':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'sub':
+                                    if qty == '':
+                                        qty = 0
+                                    conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' """%(col, from_uom, qty, from_uom, from_uom)
+                                    conversion_uom = from_uom
+                                elif request.get_filter("operation")['type'] == 'mul':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' """%(col, from_uom, qty, from_uom, from_uom, from_uom)
+                                    conversion_uom = """ %s*%s """%(from_uom,from_uom)
+                                elif request.get_filter("operation")['type'] == 'div':
+                                    if qty == '':
+                                        qty = 1
+                                    conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' """%(col, from_uom, qty, from_uom, from_uom, from_uom)
+                                    conversion_uom = """ %s/%s """%(from_uom,from_uom)
+
                     cols[
                         columns.index(col)
                     ] = unionColumns[columns.index(col)].replace(
                         "NULL::double precision",
-                        convert_unit
+                        conversion_query
                     )
                 else:
                     cols[
@@ -952,6 +992,7 @@ temporalFilter:
             """ % (
                 ", ".join(cols), table
             )
+
             if len(where) > 0:
                 uSql += "WHERE %s" % (
                     'AND'.join(where)
@@ -1024,11 +1065,11 @@ temporalFilter:
         table_name = "data._%s" % offering['name'].lower()
 
         columns = []
-        ConvertUnit=''
-        convert_unit=''
-        To_unit=''
+        from_uom=''
+        conversion_query=''
+        to_unit=''
         if request.get_filter("in_unit") is not None:
-            To_unit=yield from self.findLookUp(request.get_filter("in_unit"))
+            to_unit=yield from self.findLookUp(request.get_filter("in_unit"))
         # columns_qi = []
         op_filter = request.get_filter('observedProperties')
 
@@ -1045,7 +1086,7 @@ temporalFilter:
                     "def": op['definition'],
                     "name": op['name'],
                     "type": op['type'],
-                    "uom": To_unit
+                    "uom": to_unit
                 })
             for op in offering['observable_properties']:
                 if op['type'] == setting._COMPLEX_OBSERVATION:
@@ -1062,11 +1103,11 @@ temporalFilter:
                             "def": op['definition'],
                             "name": op['name'],
                             "type": op['type'],
-                            "uom": To_unit
+                            "uom": to_unit
                         })
                     )
                     columns.append(op['column'])
-                    ConvertUnit=op['uom']
+                    from_uom=op['uom']
                     # columns_qi.append('%s_qi' % op['column'])
 
         elif offering.is_array():
@@ -1086,16 +1127,121 @@ temporalFilter:
                         "def": op['definition'],
                         "name": op['name'],
                         "type": op['type'],
-                        "uom": To_unit
+                        "uom": to_unit
                     })
                 columns.append(op['column'])
-                ConvertUnit=op['uom']
+                from_uom=op['uom']
                 # columns_qi.append('%s_qi' % op['column'])
-
+        # if request.get_filter("in_unit") is not None:
+            # conversion_query="(%s::text||'%s')::unit@@'%s' as %s "%(", ".join(columns), from_uom, to_unit, ", ".join(columns))
+        conversion_query = ''
         if request.get_filter("in_unit") is not None:
-            convert_unit="(%s::text||'%s')::unit@@'%s' as %s "%(", ".join(columns), ConvertUnit, To_unit, ", ".join(columns))
+            to_unit = yield from self.findLookUp(request.get_filter("in_unit"))
+            if request.get_filter("operation") is not None:
+                if 'unit' in request.get_filter("operation"):
+                    unit = yield from self.findLookUp(request.get_filter("operation")['unit'])
+                    if 'qty' in request.get_filter("operation"):
+                        qty = request.get_filter("operation")['qty']
+                        if 'type' in request.get_filter("operation"):
+                            if request.get_filter("operation")['type'] == 'add':
+                                if qty == '':
+                                    qty = 0
+                                conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' as %s """%(", ".join(columns), from_uom, qty, unit, to_unit, ", ".join(columns))
+                                conversion_uom = to_unit
+                            elif request.get_filter("operation")['type'] == 'sub':
+                                if qty == '':
+                                    qty = 0
+                                conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' as %s """%(", ".join(columns), from_uom, qty, unit, to_unit, ", ".join(columns))
+                                conversion_uom = to_unit
+                            elif request.get_filter("operation")['type'] == 'mul':
+                                if qty == '':
+                                    qty = 1
+                                conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' as %s """%(", ".join(columns), from_uom, qty, unit, to_unit, unit, ", ".join(columns))
+                                conversion_uom = """ %s*%s """%(to_unit,unit)
+                            elif request.get_filter("operation")['type'] == 'div':
+                                if qty == '':
+                                    qty = 1
+                                conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' as %s """%(", ".join(columns), from_uom, qty, unit, to_unit, unit, ", ".join(columns))
+                                conversion_uom = """ %s/%s """%(to_unit,unit)
+                else:
+                    if 'qty' in request.get_filter("operation"):
+                        qty = request.get_filter("operation")['qty']
+                        if 'type' in request.get_filter("operation"):
+                            if request.get_filter("operation")['type'] == 'add':
+                                if qty == '':
+                                    qty = 0
+                                conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' as %s """%(", ".join(columns), from_uom, qty, from_uom, to_unit, ", ".join(columns))
+                                conversion_uom = to_unit
+                            elif request.get_filter("operation")['type'] == 'sub':
+                                if qty == '':
+                                    qty = 0
+                                conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' as %s """%(", ".join(columns), from_uom, qty, from_uom, to_unit, ", ".join(columns))
+                                conversion_uom = to_unit
+                            elif request.get_filter("operation")['type'] == 'mul':
+                                if qty == '':
+                                    qty = 1
+                                conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' as %s """%(", ".join(columns), from_uom, qty, from_uom, to_unit, to_unit, ", ".join(columns))
+                                conversion_uom = """ %s*%s """%(to_unit,to_unit)
+                            elif request.get_filter("operation")['type'] == 'div':
+                                if qty == '':
+                                    qty = 1
+                                conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' as %s """%(", ".join(columns), from_uom, qty, from_uom, to_unit, to_unit, ", ".join(columns))
+                                conversion_uom = """ %s/%s """%(to_unit,to_unit)
+            else:
+                conversion_query = """(%s::text||'%s')::unit@@'%s' as %s """%(", ".join(columns), from_uom, to_unit, ", ".join(columns))
+                conversion_uom = to_unit
+        elif request.get_filter("operation") is not None:
+            if 'unit' in request.get_filter("operation"):
+                unit = yield from self.findLookUp(request.get_filter("operation")['unit'])
+                if 'qty' in request.get_filter("operation"):
+                    qty = request.get_filter("operation")['qty']
+                    if 'type' in request.get_filter("operation"):
+                        if request.get_filter("operation")['type'] == 'add':
+                            if qty == '':
+                                qty = 0
+                            conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' as %s """%(", ".join(columns), from_uom, qty, unit, from_uom, ", ".join(columns))
+                            conversion_uom = from_uom
+                        elif request.get_filter("operation")['type'] == 'sub':
+                            if qty == '':
+                                qty = 0
+                            conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' as %s """%(", ".join(columns), from_uom, qty, unit, from_uom, ", ".join(columns))
+                            conversion_uom = from_uom
+                        elif request.get_filter("operation")['type'] == 'mul':
+                            if qty == '':
+                                qty = 1
+                            conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' as %s """%(", ".join(columns), from_uom, qty, unit, from_uom, ", ".join(columns))
+                            conversion_uom = """ %s*%s """%(from_uom,unit)
+                        elif request.get_filter("operation")['type'] == 'div':
+                            if qty == '':
+                                qty = 1
+                            conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' as %s """%(", ".join(columns), from_uom, qty, unit, from_uom, unit, ", ".join(columns))
+                            conversion_uom = """ %s/%s """%(from_uom,unit)
+            else:
+                if 'qty' in request.get_filter("operation"):
+                    qty = request.get_filter("operation")['qty']
+                    if 'type' in request.get_filter("operation"):
+                        if request.get_filter("operation")['type'] == 'add':
+                            if qty == '':
+                                qty = 0
+                            conversion_query = """(%s::text||'%s')::unit + ('%s'::text||'%s')::unit@@'%s' as %s """%(", ".join(columns), from_uom, qty, from_uom, from_uom, ", ".join(columns))
+                            conversion_uom = from_uom
+                        elif request.get_filter("operation")['type'] == 'sub':
+                            if qty == '':
+                                qty = 0
+                            conversion_query = """(%s::text||'%s')::unit - ('%s'::text||'%s')::unit@@'%s' as %s """%(", ".join(columns), from_uom, qty, from_uom, from_uom, ", ".join(columns))
+                            conversion_uom = from_uom
+                        elif request.get_filter("operation")['type'] == 'mul':
+                            if qty == '':
+                                qty = 1
+                            conversion_query = """(%s::text||'%s')::unit * '%s %s' ::unit@@'%s*%s' as %s """%(", ".join(columns), from_uom, qty, from_uom, from_uom, from_uom, ", ".join(columns))
+                            conversion_uom = """ %s*%s """%(from_uom,from_uom)
+                        elif request.get_filter("operation")['type'] == 'div':
+                            if qty == '':
+                                qty = 1
+                            conversion_query = """(%s::text||'%s')::unit / '%s %s' ::unit@@'%s/%s' as %s """%(", ".join(columns), from_uom, qty, from_uom, from_uom, from_uom, ", ".join(columns))
+                            conversion_uom = """ %s/%s """%(from_uom,from_uom)
         else:
-            convert_unit="%s"%(", ".join(columns))
+            conversion_query="%s"%(", ".join(columns))
 
         observation["phenomenonTime"] = {
             "timePeriod": {
@@ -1167,12 +1313,10 @@ temporalFilter:
                 end_time,
                 result_time,
                 %s""" % (
-                             convert_unit
+                             conversion_query
                 ) + """
             FROM %s
             """ % table_name
-        print('GetData Called')
-        print(sql)
         temporal = []
         where = []
         params = []
@@ -1228,6 +1372,7 @@ temporalFilter:
 
         yield from cur.execute(sql, tuple(params))
         rec = yield from cur.fetchone()
+
         request['observations'] += rec[0]
 
         yield from self.__download_csv_from_json(request, rec[0])
