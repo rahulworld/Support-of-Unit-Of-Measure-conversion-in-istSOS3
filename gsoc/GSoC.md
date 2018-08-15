@@ -48,9 +48,9 @@ Pint is a `Python package` to define, operate and manipulate physical quantities
 
 ### Support of Unit Of Measure conversion in istSOS3 Pool
 
-[pull request](https://github.com/istSOS/istsos3/pull/1)
+[pull request](https://github.com/istSOS/istsos3-unit-conversion/pull/1)
 
-[forked github Repo.](https://github.com/rahulworld/istsos3/tree/unit)
+[forked github Repo.](https://github.com/rahulworld/istsos3-unit-conversion/tree/unit)
 
 [Testing github Repo.](https://github.com/rahulworld/Support-of-Unit-Of-Measure-conversion-in-istSOS3/commits/master)
 
